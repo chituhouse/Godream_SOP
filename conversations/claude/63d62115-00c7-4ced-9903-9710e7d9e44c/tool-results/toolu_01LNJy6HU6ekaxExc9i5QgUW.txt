@@ -1,0 +1,184 @@
+components/cards/placeholder_card.py:45:                background-color: #242424;
+components/cards/placeholder_card.py:46:                border: 2px dashed #555555;
+components/cards/placeholder_card.py:58:        self.status_label.setStyleSheet("color: #d0d0d0;")
+components/cards/placeholder_card.py:65:        self.prompt_label.setStyleSheet("color: #999999; font-size: 11px;")
+components/cards/placeholder_card.py:70:        self.timer_label.setStyleSheet("color: #666666; font-size: 10px;")
+components/cards/placeholder_card.py:92:            self.status_label.setStyleSheet("color: #d0d0d0;")
+components/cards/placeholder_card.py:95:            self.status_label.setStyleSheet("color: #4CAF50;")
+components/cards/placeholder_card.py:98:            self.status_label.setStyleSheet("color: #2196F3;")
+components/cards/placeholder_card.py:103:            self.status_label.setStyleSheet("color: #f44336;")
+components/widgets/image_preview_dialog.py:35:        control_bar.setStyleSheet("background-color: rgba(0, 0, 0, 0.7);")
+components/widgets/image_preview_dialog.py:45:                background-color: rgba(255, 255, 255, 0.1); 
+components/widgets/image_preview_dialog.py:51:            QPushButton:hover { background-color: rgba(255, 255, 255, 0.3); }
+components/widgets/image_preview_dialog.py:70:                background-color: rgba(255, 255, 255, 0.1); 
+components/widgets/image_preview_dialog.py:76:            QPushButton:hover { background-color: rgba(255, 255, 255, 0.3); }
+components/main_window.py:71:                    bg_color = QColor(colors.get('palette.neutral.bg_app', '#141415'))
+components/main_window.py:72:                    text_color = QColor(colors.get('palette.text.main', '#EDEDED'))
+components/main_window.py:73:                    surface_color = QColor(colors.get('palette.neutral.bg_card', '#1C1C1E'))
+components/main_window.py:74:                    panel_color = QColor(colors.get('palette.neutral.bg_panel', '#202022'))
+components/main_window.py:75:                    primary_color = QColor(colors.get('palette.brand.main', '#E52E4D'))
+components/main_window.py:314:        bg_app = colors.get('palette.neutral.bg_app', '#121212')
+components/main_window.py:327:        bg_sidebar = colors.get('palette.neutral.bg_sidebar', '#141414')
+components/main_window.py:328:        border_sidebar = colors.get('palette.neutral.border_sidebar', '#2A2A2A')
+components/main_window.py:337:        text_disabled = colors.get('palette.text.disabled', '#666')
+components/main_window.py:338:        text_primary = colors.get('palette.text.primary', '#EEE')
+components/main_window.py:339:        warning_color = colors.get('palette.semantic.warning', '#FFBC2E')
+components/main_window.py:350:                background-color: rgba(128, 128, 128, 0.1);
+components/main_window.py:367:                background-color: rgba(128, 128, 128, 0.1);
+components/main_window.py:376:        bg_panel = colors.get('palette.neutral.bg_panel', '#141414')
+components/main_window.py:377:        border_subtle = colors.get('palette.neutral.border_subtle', '#2A2A2A')
+components/main_window.py:378:        text_secondary = colors.get('palette.text.secondary', '#888')
+components/main_window.py:457:                background-color: rgba(0, 0, 0, 0.8);
+components/modes/image_mode_widget.py:155:                        border: 1px dashed {colors.get('palette.neutral.border_strong', '#555')};
+components/modes/image_mode_widget.py:157:                        color: {colors.get('palette.text.secondary', '#888')};
+components/modes/image_mode_widget.py:163:                        border-color: {colors.get('palette.brand.main', '#5E6AD2')};
+components/modes/image_mode_widget.py:164:                        color: {colors.get('palette.brand.main', '#5E6AD2')};
+components/modes/image_mode_widget.py:173:                bg_input = colors.get('palette.neutral.bg_input', '#2d2d2d')
+components/modes/image_mode_widget.py:174:                text_color = colors.get('text', '#e4e4e4')
+components/modes/image_mode_widget.py:175:                border_color = colors.get('palette.neutral.border_subtle', '#3a3a3a')
+components/modes/image_mode_widget.py:176:                primary_color = colors.get('palette.brand.main', '#E52E4D')
+components/modes/image_mode_widget.py:209:        # self.setStyleSheet("background-color: #1a1a1a;")
+components/modes/image_mode_widget.py:229:        self.status_label.setStyleSheet(f"color: {colors.get('palette.text.secondary', '#888888')};")
+components/modes/image_mode_widget.py:302:                background-color: transparent; /* 移除 #2b2b2b 硬编码 */
+components/modes/image_mode_widget.py:393:        error_color = colors.get('palette.semantic.error', '#FF5F56')
+components/modes/image_mode_widget.py:423:        disabled_color = colors.get('palette.text.disabled', '#666666')
+components/modes/image_mode_widget.py:1706:                success_color = colors.get('palette.semantic.success', '#27C93F')
+components/modes/image_mode_widget.py:1709:                        background-color: rgba(39, 201, 63, 0.2);
+components/modes/image_mode_widget.py:1728:            success_color = colors.get('palette.semantic.success', '#27C93F')
+components/modes/image_mode_widget.py:1729:            secondary_color = colors.get('palette.text.secondary', '#888888')
+components/modes/image_mode_widget.py:1831:            success_color = colors.get('palette.semantic.success', '#27C93F')
+components/modes/image_mode_widget.py:1869:        success_color = colors.get('palette.semantic.success', '#27C93F')
+components/modes/image_mode_widget.py:1870:        secondary_color = colors.get('palette.text.secondary', '#888888')
+components/modes/image_mode_widget.py:1898:        bg_panel = colors.get('palette.neutral.bg_panel', '#2b2b2b')
+components/modes/image_mode_widget.py:1899:        bg_card = colors.get('palette.neutral.bg_card', '#4a4a4a')
+components/modes/image_mode_widget.py:1900:        bg_hover = colors.get('palette.neutral.bg_hover', '#5a5a5a')
+components/modes/image_mode_widget.py:1901:        border_subtle = colors.get('palette.neutral.border_subtle', '#555')
+components/modes/image_mode_widget.py:1902:        border_strong = colors.get('palette.neutral.border_strong', '#666')
+components/modes/image_mode_widget.py:1903:        text_primary = colors.get('palette.text.primary', '#ffffff')
+components/modes/video_mode_widget.py:124:        bg_app = colors.get('palette.neutral.bg_app', '#121212')
+components/modes/video_mode_widget.py:128:            bg_input = colors.get('palette.neutral.bg_input', '#2d2d2d')
+components/modes/video_mode_widget.py:129:            text_color = colors.get('palette.text.main', '#e4e4e4')
+components/modes/video_mode_widget.py:130:            border_color = colors.get('palette.neutral.border_subtle', '#3a3a3a')
+components/modes/video_mode_widget.py:131:            primary_color = colors.get('palette.brand.main', '#E52E4D')
+components/modes/video_mode_widget.py:182:        self.status_label.setStyleSheet(f"color: {colors.get('palette.text.secondary', '#888888')};")
+components/modes/video_mode_widget.py:343:        bg_input = colors.get('palette.neutral.bg_input', '#2d2d2d')
+components/modes/video_mode_widget.py:344:        text_color = colors.get('palette.text.main', '#e4e4e4')
+components/modes/video_mode_widget.py:345:        border_color = colors.get('palette.neutral.border', '#3a3a3a')
+components/modes/video_mode_widget.py:346:        primary_color = colors.get('palette.brand.main', '#E52E4D')
+components/modes/video_mode_widget.py:1420:        bg_panel = colors.get('palette.neutral.bg_panel', '#2b2b2b')
+components/modes/video_mode_widget.py:1421:        bg_card = colors.get('palette.neutral.bg_card', '#4a4a4a')
+components/modes/video_mode_widget.py:1422:        bg_hover = colors.get('palette.neutral.bg_hover', '#5a5a5a')
+components/modes/video_mode_widget.py:1423:        border_subtle = colors.get('palette.neutral.border_subtle', '#555')
+components/modes/video_mode_widget.py:1424:        border_strong = colors.get('palette.neutral.border_strong', '#666')
+components/modes/video_mode_widget.py:1425:        text_primary = colors.get('palette.text.primary', '#ffffff')
+components/modes/video_mode_widget.py:2210:            "success": colors.get('palette.semantic.success', '#27C93F'),
+components/modes/video_mode_widget.py:2211:            "warning": colors.get('palette.semantic.warning', '#FFBC2E'),
+components/modes/video_mode_widget.py:2212:            "error": colors.get('palette.semantic.error', '#FF5F56'),
+components/modes/video_mode_widget.py:2213:            "info": colors.get('palette.semantic.info', '#5E6AD2'),
+components/modes/video_mode_widget.py:2216:        text_on_brand = colors.get('palette.text.on_brand', '#FFFFFF')
+components/modes/video_mode_widget.py:2270:                background-color: #666;
+components/modes/video_mode_widget.py:2271:                color: #999;
+components/modes/video_mode_widget.py:2310:        warning_color = colors.get('palette.semantic.warning', '#FFBC2E')
+components/modes/video_mode_widget.py:2311:        disabled_color = colors.get('palette.text.disabled', '#666666')
+components/modes/video_mode_widget.py:2336:                color: #999;
+components/generation_image_mode_widget_backup.py:242:                border: 2px dashed #999;
+components/generation_image_mode_widget_backup.py:244:                background-color: #f9f9f9;
+components/settings_page.py:54:        default_color = colors.get('palette.text.secondary', '#888888')
+components/settings_page.py:62:            color = colors.get('palette.semantic.success', '#27C93F')
+components/settings_page.py:64:            color = colors.get('palette.semantic.error', '#FF5F56')
+components/cards/video_card.py:85:                background-color: #1a1a1a;
+components/cards/video_card.py:86:                border: 1px solid #3a3a5e;
+components/cards/video_card.py:91:                border-color: #FF6B35;
+components/cards/video_card.py:107:            self.video_label.setStyleSheet(f"border: 1px solid #ccc; border-radius: {radius}px;")
+components/cards/video_card.py:109:            self.video_label.setStyleSheet("border: 1px solid #ccc; border-radius: 4px;")
+components/cards/video_card.py:124:                background-color: rgba(0, 120, 212, 210);
+components/cards/video_card.py:125:                color: #ffffff;
+components/cards/video_card.py:142:                QLabel { border: 1px solid #ccc; border-radius: 4px; ; color: #FF6B35; background-color: #2a2a2a; }
+components/cards/video_card.py:156:            prompt_label.setStyleSheet("color: #ffffff;")  # Font size handled by unified style system
+components/cards/video_card.py:158:            prompt_label.setStyleSheet("; color: #ffffff;")
+components/cards/video_card.py:174:            time_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+components/cards/video_card.py:176:            time_label.setStyleSheet("; color: #cccccc;")
+components/cards/video_card.py:188:            duration_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+components/cards/video_card.py:190:            duration_label.setStyleSheet("; color: #cccccc;")
+components/cards/video_card.py:195:            resolution_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+components/cards/video_card.py:197:            resolution_label.setStyleSheet("; color: #cccccc;")
+components/cards/video_card.py:202:            model_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+components/cards/video_card.py:204:            model_label.setStyleSheet("; color: #cccccc;")
+components/cards/video_card.py:236:                background-color: rgba(0, 0, 0, 0.75);
+components/cards/video_card.py:237:                color: #ffffff;
+components/cards/video_card.py:283:                    QLabel { border: 1px solid #ccc; border-radius: 4px; ; color: #888; }
+components/cards/video_card.py:319:                    QLabel { border: 1px solid #ccc; border-radius: 4px; background-color: #2a2a2a; }
+components/cards/video_card.py:490:                background-color: #2a2a2a;
+components/cards/video_card.py:492:                border: 1px solid #555;
+components/cards/video_card.py:501:                background-color: #4CAF50;
+components/widgets/mode_button.py:32:        bg_normal = theme_engine.get_color("palette.neutral.bg_panel") # Was #2a2a3e
+components/widgets/mode_button.py:33:        border_normal = theme_engine.get_color("palette.neutral.border_subtle") # Was #3a3a5e
+components/widgets/integrated_reference_panel.py:79:            'success': QColor(colors.get('palette.semantic.success', '#27C93F')),
+components/widgets/integrated_reference_panel.py:80:            'error': QColor(colors.get('palette.semantic.error', '#FF5F56')),
+components/widgets/integrated_reference_panel.py:82:            'white': QColor('#ffffff'),
+components/widgets/integrated_reference_panel.py:289:            text_color = QColor(colors.get('palette.text.disabled', '#666666'))
+components/widgets/integrated_reference_panel.py:395:        bg_input = colors.get('palette.neutral.bg_input', '#2d2d2d')
+components/widgets/integrated_reference_panel.py:396:        border_subtle = colors.get('palette.neutral.border_subtle', '#3a3a3a')
+components/widgets/integrated_reference_panel.py:397:        error_color = colors.get('palette.semantic.error', '#FF5F56')
+components/widgets/integrated_reference_panel.py:398:        secondary_color = colors.get('palette.text.secondary', '#888888')
+components/widgets/integrated_reference_panel.py:411:                background-color: rgba(255, 255, 255, 0.2);
+components/widgets/integrated_reference_panel.py:412:                border: 1px solid rgba(255, 255, 255, 0.5);
+components/widgets/integrated_reference_panel.py:418:                 background-color: rgba(255, 255, 255, 0.25);
+components/widgets/integrated_reference_panel.py:419:                 border: 1px solid rgba(255, 255, 255, 0.6);
+components/widgets/integrated_reference_panel.py:479:        error_color = colors.get('palette.semantic.error', '#FF5F56')
+components/widgets/integrated_reference_panel.py:480:        secondary_color = colors.get('palette.text.secondary', '#888888')
+components/cards/image_card.py:117:                background-color: #1a1a1a;
+components/cards/image_card.py:118:                border: 1px solid #3a3a5e;
+components/cards/image_card.py:123:                border-color: #4CAF50;
+components/cards/image_card.py:138:        self.image_label.setStyleSheet("border: 1px solid #ccc; border-radius: 4px;")
+components/cards/image_card.py:153:                background-color: rgba(255, 140, 0, 210);
+components/cards/image_card.py:154:                color: #ffffff;
+components/cards/image_card.py:176:        prompt_label.setStyleSheet("; color: #ffffff;")
+components/cards/image_card.py:191:        time_label.setStyleSheet("; color: #cccccc;")
+components/cards/image_card.py:205:        model_label.setStyleSheet("; color: #cccccc;")
+components/cards/image_card.py:233:                background-color: rgba(0, 0, 0, 0.72);
+components/cards/image_card.py:234:                color: #ffffff;
+components/cards/image_card.py:484:                background-color: #2a2a2a;
+components/cards/image_card.py:486:                border: 1px solid #555;
+components/cards/image_card.py:492:                background-color: #4CAF50;
+components/dialogs/image_detail_dialog.py:131:        self.export_status_label.setStyleSheet("color: #bbbbbb; ;")
+components/dialogs/image_detail_dialog.py:177:        zoom_info.setStyleSheet("color: #cccccc; background-color: transparent;")
+components/dialogs/image_detail_dialog.py:527:                background-color: #2a2a3e;
+components/dialogs/image_detail_dialog.py:528:                color: #ffffff;
+components/dialogs/image_detail_dialog.py:529:                border: 1px solid #555;
+components/dialogs/image_detail_dialog.py:538:                background-color: #4CAF50;
+components/dialogs/image_detail_dialog.py:716:        font_tip_label.setStyleSheet("color: #888; margin: 2px 0px;")
+components/dialogs/image_detail_dialog.py:739:        bg_color = colors.get('palette.neutral.bg_surface', '#1C1C1E')
+components/dialogs/image_detail_dialog.py:740:        text_color = colors.get('text', '#FFFFFF')
+components/dialogs/image_detail_dialog.py:751:                 background-color: {colors.get('palette.neutral.bg_card', '#2a2a3e')};
+components/dialogs/image_detail_dialog.py:752:                 border-left: 1px solid {colors.get('palette.neutral.border_subtle', '#333')};
+components/dialogs/image_detail_dialog.py:755:                background-color: {colors.get('palette.neutral.bg_card', '#2a2a3e')};
+components/dialogs/image_detail_dialog.py:757:                border: 1px solid {colors.get('palette.neutral.border_subtle', '#555')};
+components/dialogs/image_detail_dialog.py:806:        bg_tag = colors.get('palette.neutral.bg_surface', '#2a2a3e') # Dynamic background
+components/dialogs/image_detail_dialog.py:807:        border_tag = colors.get('palette.neutral.border_subtle', '#555')
+components/dialogs/image_detail_dialog.py:808:        text_tag = colors.get('text', '#ffffff')
+components/dialogs/image_detail_dialog.py:809:        hover_bg = colors.get('palette.neutral.bg_hover', '#3a3a4e')
+components/dialogs/image_detail_dialog.py:810:        success_border = colors.get('palette.semantic.success', '#4CAF50')
+components/reference_assets/actions.py:72:    info_label.setStyleSheet("color: #ffb347; ;")
+components/reference_assets/actions.py:84:    index_label.setStyleSheet("color: #bbbbbb; ;")
+components/reference_assets/actions.py:86:    hint_label.setStyleSheet("color: #bbbbbb; ;")
+components/delegates/image_card_delegate.py:47:            'surface': QColor(colors.get('palette.neutral.bg_card', '#1C1C1E')),
+components/delegates/image_card_delegate.py:48:            'surface_hover': QColor(colors.get('palette.neutral.bg_hover', '#242424')),
+components/delegates/image_card_delegate.py:49:            'primary': QColor(colors.get('palette.brand.main', '#5E6AD2')),
+components/delegates/image_card_delegate.py:50:            'primary_pressed': QColor(colors.get('palette.brand.pressed', '#4C55AA')),
+components/delegates/image_card_delegate.py:51:            'border': QColor(colors.get('palette.neutral.border_subtle', '#2A2A2A')),
+components/delegates/image_card_delegate.py:52:            'text': QColor(colors.get('palette.text.primary', '#EEEEEE')),
+components/delegates/image_card_delegate.py:53:            'text_secondary': QColor(colors.get('palette.text.secondary', '#888888')),
+components/delegates/image_card_delegate.py:54:            'warning': QColor(colors.get('palette.semantic.warning', '#FFBC2E')),
+components/delegates/image_card_delegate.py:55:            'white': QColor('#ffffff'),
+components/delegates/image_card_delegate.py:56:            'placeholder_bg': QColor(colors.get('palette.neutral.bg_card', '#181818')),
+components/delegates/image_card_delegate.py:57:            'placeholder_border': QColor(colors.get('palette.neutral.border_strong', '#333333')),
+components/delegates/image_card_delegate.py:58:            'status_pending_text': QColor(colors.get('palette.text.secondary', '#888888')),
+components/delegates/image_card_delegate.py:59:            'status_gen_text': QColor(colors.get('palette.semantic.success', '#27C93F')),
+components/delegates/image_card_delegate.py:60:            'status_fail_text': QColor(colors.get('palette.semantic.error', '#FF5F56')),
+components/delegates/image_card_delegate.py:61:            'loading_text': QColor(colors.get('palette.text.disabled', '#666666'))
+components/delegates/image_card_delegate.py:278:        painter.setPen(c['text_secondary'] if not is_selected else QColor('#e6f4ff')) # Literal for now or add to cache
+components/widgets/reference_assets_panel.py:56:        selection_color = colors.get('palette.semantic.success', '#27C93F')
+components/
+
+... [69 lines truncated] ...

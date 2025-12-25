@@ -1,0 +1,424 @@
+INFO  2025-11-12 18:49:25,919 [MainThread] serena.cli:start_mcp_server:172 - Initializing Serena MCP server
+INFO  2025-11-12 18:49:25,919 [MainThread] serena.cli:start_mcp_server:173 - Storing logs in /Users/yunchang/.serena/logs/2025-11-12/mcp_20251112-184925.txt
+INFO  2025-11-12 18:49:25,921 [MainThread] serena.config.serena_config:from_config_file:458 - Loading Serena configuration from /Users/yunchang/.serena/serena_config.yml
+WARNING 2025-11-12 18:49:25,929 [MainThread] serena.config.serena_config:from_config_file:477 - Project path /Users/yunchang/Downloads/dist 2/GoDream Trial.app does not exist or does not contain a project configuration file, skipping.
+INFO  2025-11-12 18:49:25,936 [MainThread] serena.agent:__init__:130 - Will record tool usage statistics with token count estimator: TIKTOKEN_GPT4O.
+INFO  2025-11-12 18:49:25,939 [MainThread] serena.analytics:__init__:39 - Loading tiktoken encoding for model gpt-4o, this may take a while on the first run.
+INFO  2025-11-12 18:49:26,302 [MainThread] serena.agent:__init__:134 - Starting Serena server (version=0.1.4-e83d080c-dirty, process id=96711, parent process id=96274)
+INFO  2025-11-12 18:49:26,303 [MainThread] serena.agent:__init__:135 - Configuration file: /Users/yunchang/.serena/serena_config.yml
+INFO  2025-11-12 18:49:26,303 [MainThread] serena.agent:__init__:136 - Available projects: 鸽梦（无 ops）
+INFO  2025-11-12 18:49:26,303 [MainThread] serena.agent:__init__:137 - Loaded tools (38): read_file, create_text_file, list_dir, find_file, replace_regex, delete_lines, replace_lines, insert_at_line, search_for_pattern, restart_language_server, get_symbols_overview, find_symbol, find_referencing_symbols, replace_symbol_body, insert_after_symbol, insert_before_symbol, rename_symbol, write_memory, read_memory, list_memories, delete_memory, edit_memory, execute_shell_command, activate_project, remove_project, switch_modes, get_current_config, check_onboarding_performed, onboarding, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, summarize_changes, prepare_for_new_conversation, initial_instructions, jet_brains_find_symbol, jet_brains_find_referencing_symbols, jet_brains_get_symbols_overview
+INFO  2025-11-12 18:49:26,304 [MainThread] serena.config.serena_config:apply:112 - SerenaAgentContext[name='codex'] excluded 5 tools: create_text_file, read_file, execute_shell_command, prepare_for_new_conversation, replace_regex
+INFO  2025-11-12 18:49:26,305 [MainThread] serena.agent:__init__:151 - Number of exposed tools: 23
+INFO  2025-11-12 18:49:26,323 [MainThread] serena.agent:_update_active_tools:382 - Active tools (23): activate_project, check_onboarding_performed, delete_memory, edit_memory, find_file, find_referencing_symbols, find_symbol, get_current_config, get_symbols_overview, initial_instructions, insert_after_symbol, insert_before_symbol, list_dir, list_memories, onboarding, read_memory, rename_symbol, replace_symbol_body, search_for_pattern, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, write_memory
+INFO  2025-11-12 18:49:26,329 [MainThread] serena.agent:__init__:184 - Serena web dashboard started at http://127.0.0.1:24282/dashboard/index.html
+INFO  2025-11-12 18:49:27,339 [MainThread] serena.agent:create_system_prompt:349 - Generating system prompt with available_tools=(see exposed tools), available_markers={'InsertBeforeSymbolTool', 'RenameSymbolTool', 'InitialInstructionsTool', 'ToolMarkerSymbolicRead', 'ToolMarkerDoesNotRequireActiveProject', 'GetSymbolsOverviewTool', 'FindReferencingSymbolsTool', 'ToolMarkerSymbolicEdit', 'ActivateProjectTool', 'ToolMarkerCanEdit', 'FindSymbolTool', 'InsertAfterSymbolTool', 'ReplaceSymbolBodyTool'}
+INFO  2025-11-12 18:49:27,360 [MainThread] serena.agent:create_system_prompt:361 - System prompt:
+You are a professional coding agent concerned with one particular codebase. You have 
+access to semantic coding tools on which you rely heavily for all your work, as well as collection of memory 
+files containing general information about the codebase. You operate in a resource-efficient and intelligent manner, always
+keeping in mind to not read or generate content that is not needed for the task at hand.
+
+When reading code in order to answer a user question or task, you should try reading only the necessary code. 
+Some tasks may require you to understand the architecture of large parts of the codebase, while for others,
+it may be enough to read a small set of symbols or a single file.
+Generally, you should avoid reading entire files unless it is absolutely necessary, instead relying on
+intelligent step-by-step acquisition of information. However, if you already read a file, it does not make
+sense to further analyse it with the symbolic tools (except for the `find_referencing_symbols` tool), 
+as you already have the information.
+
+I WILL BE SERIOUSLY UPSET IF YOU READ ENTIRE FILES WITHOUT NEED!
+
+CONSIDER INSTEAD USING THE OVERVIEW TOOL AND SYMBOLIC TOOLS TO READ ONLY THE NECESSARY CODE FIRST!
+I WILL BE EVEN MORE UPSET IF AFTER HAVING READ AN ENTIRE FILE YOU KEEP READING THE SAME CONTENT WITH THE SYMBOLIC TOOLS!
+THE PURPOSE OF THE SYMBOLIC TOOLS IS TO HAVE TO READ LESS CODE, NOT READ THE SAME CONTENT MULTIPLE TIMES!
+
+
+You can achieve the intelligent reading of code by using the symbolic tools for getting an overview of symbols and
+the relations between them, and then only reading the bodies of symbols that are necessary to answer the question 
+or complete the task. 
+You can use the standard tools like list_dir, find_file and search_for_pattern if you need to.
+When tools allow it, you pass the `relative_path` parameter to restrict the search to a specific file or directory.
+For some tools, `relative_path` can only be a file path, so make sure to properly read the tool descriptions.
+
+If you are unsure about a symbol's name or location (to the extent that substring_matching for the symbol name is not enough), you can use the `search_for_pattern` tool, which allows fast
+and flexible search for patterns in the codebase.This way you can first find candidates for symbols or files,
+and then proceed with the symbolic tools.
+
+
+
+Symbols are identified by their `name_path and `relative_path`, see the description of the `find_symbol` tool for more details
+on how the `name_path` matches symbols.
+You can get information about available symbols by using the `get_symbols_overview` tool for finding top-level symbols in a file,
+or by using `find_symbol` if you already know the symbol's name path. You generally try to read as little code as possible
+while still solving your task, meaning you only read the bodies when you need to, and after you have found the symbol you want to edit.
+For example, if you are working with python code and already know that you need to read the body of the constructor of the class Foo, you can directly
+use `find_symbol` with the name path `Foo/__init__` and `include_body=True`. If you don't know yet which methods in `Foo` you need to read or edit,
+you can use `find_symbol` with the name path `Foo`, `include_body=False` and `depth=1` to get all (top-level) methods of `Foo` before proceeding
+to read the desired methods with `include_body=True`
+You can understand relationships between symbols by using the `find_referencing_symbols` tool.
+
+
+
+You generally have access to memories and it may be useful for you to read them, but also only if they help you
+to answer the question or complete the task. You can infer which memories are relevant to the current task by reading
+the memory names and descriptions.
+
+
+The context and modes of operation are described below. From them you can infer how to interact with your user
+and which tasks and kinds of interactions are expected of you.
+
+Context description:
+You are running in IDE assistant context where file operations, basic (line-based) edits and reads, 
+and shell commands are handled by your own, internal tools.
+The initial instructions and the current config inform you on which tools are available to you,
+and how to use them.
+Don't attempt to use any excluded tools, instead rely on your own internal tools
+for achieving the basic file or shell operations.
+
+If serena's tools can be used for achieving your task, 
+you should prioritize them. In particular, it is important that you avoid reading entire source code files,
+unless it is strictly necessary! Instead, for exploring and reading code in a token-efficient manner, 
+you should use serena's overview and symbolic search tools. The call of the read_file tool on an entire source code 
+file should only happen in exceptional cases, usually you should first explore the file (by itself or as part of exploring
+the directory containing it) using the symbol_overview tool, and then make targeted reads using find_symbol and other symbolic tools.
+For non-code files or for reads where you don't know the symbol's name path you can use the patterns searching tool,
+using the read_file as a last resort.
+
+Modes descriptions:
+
+- You are operating in interactive mode. You should engage with the user throughout the task, asking for clarification
+whenever anything is unclear, insufficiently specified, or ambiguous.
+
+Break down complex tasks into smaller steps and explain your thinking at each stage. When you're uncertain about
+a decision, present options to the user and ask for guidance rather than making assumptions.
+
+Focus on providing informative results for intermediate steps so the user can follow along with your progress and
+provide feedback as needed.
+
+- You are operating in editing mode. You can edit files with the provided tools
+to implement the requested changes to the code base while adhering to the project's code style and patterns.
+Use symbolic editing tools whenever possible for precise code modifications.
+If no editing task has yet been provided, wait for the user to provide one.
+
+When writing new code, think about where it belongs best. Don't generate new files if you don't plan on actually
+integrating them into the codebase, instead use the editing tools to insert the code directly into the existing files in that case.
+
+You have two main approaches for editing code - editing by regex and editing by symbol.
+The symbol-based approach is appropriate if you need to adjust an entire symbol, e.g. a method, a class, a function, etc.
+But it is not appropriate if you need to adjust just a few lines of code within a symbol, for that you should
+use the regex-based approach that is described below.
+
+Let us first discuss the symbol-based approach.
+Symbols are identified by their name path and relative file path, see the description of the `find_symbol` tool for more details
+on how the `name_path` matches symbols.
+You can get information about available symbols by using the `get_symbols_overview` tool for finding top-level symbols in a file,
+or by using `find_symbol` if you already know the symbol's name path. You generally try to read as little code as possible
+while still solving your task, meaning you only read the bodies when you need to, and after you have found the symbol you want to edit.
+Before calling symbolic reading tools, you should have a basic understanding of the repository structure that you can get from memories
+or by using the `list_dir` and `find_file` tools (or similar).
+For example, if you are working with python code and already know that you need to read the body of the constructor of the class Foo, you can directly
+use `find_symbol` with the name path `Foo/__init__` and `include_body=True`. If you don't know yet which methods in `Foo` you need to read or edit,
+you can use `find_symbol` with the name path `Foo`, `include_body=False` and `depth=1` to get all (top-level) methods of `Foo` before proceeding
+to read the desired methods with `include_body=True`.
+In particular, keep in mind the description of the `replace_symbol_body` tool. If you want to add some new code at the end of the file, you should
+use the `insert_after_symbol` tool with the last top-level symbol in the file. If you want to add an import, often a good strategy is to use
+`insert_before_symbol` with the first top-level symbol in the file.
+You can understand relationships between symbols by using the `find_referencing_symbols` tool. If not explicitly requested otherwise by a user,
+you make sure that when you edit a symbol, it is either done in a backward-compatible way, or you find and adjust the references as needed.
+The `find_referencing_symbols` tool will give you code snippets around the references, as well as symbolic information.
+You will generally be able to use the info from the snippets and the regex-based approach to adjust the references as well.
+You can assume that all symbol editing tools are reliable, so you don't need to verify the results if the tool returns without error.
+
+
+
+
+You have hereby read the 'Serena Instructions Manual' and do not need to read it again.
+INFO  2025-11-12 18:49:27,364 [MainThread] serena.cli:start_mcp_server:191 - Starting MCP server …
+INFO  2025-11-12 18:49:27,661 [MainThread] serena.mcp:_set_mcp_tools:240 - Starting MCP server with 23 tools: ['list_dir', 'find_file', 'search_for_pattern', 'get_symbols_overview', 'find_symbol', 'find_referencing_symbols', 'replace_symbol_body', 'insert_after_symbol', 'insert_before_symbol', 'rename_symbol', 'write_memory', 'read_memory', 'list_memories', 'delete_memory', 'edit_memory', 'activate_project', 'get_current_config', 'check_onboarding_performed', 'onboarding', 'think_about_collected_information', 'think_about_task_adherence', 'think_about_whether_you_are_done', 'initial_instructions']
+INFO  2025-11-12 18:49:27,661 [MainThread] serena.mcp:server_lifespan:347 - MCP server lifetime setup complete
+INFO  2025-11-12 18:49:27,669 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest
+INFO  2025-11-12 18:49:27,673 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListResourcesRequest
+INFO  2025-11-12 18:49:27,681 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListResourceTemplatesRequest
+INFO  2025-11-12 18:56:52,495 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest
+INFO  2025-11-12 18:56:53,559 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:56:53,560 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-1:ListMemoriesTool
+INFO  2025-11-12 18:56:53,564 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-1:ListMemoriesTool
+INFO  2025-11-12 18:56:53,565 [Task-1:ListMemoriesTool] serena.task_executor:start:360 - Task-1:ListMemoriesTool starting ...
+INFO  2025-11-12 18:56:53,566 [Task-1:ListMemoriesTool] serena.tools.tools_base:_log_tool_application:205 - list_memories: 
+INFO  2025-11-12 18:56:53,566 [Task-1:ListMemoriesTool] serena.task_executor:stop:367 - Task-1:ListMemoriesTool completed in 0.001 seconds
+INFO  2025-11-12 18:57:06,069 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:57:06,070 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-2:ActivateProjectTool
+INFO  2025-11-12 18:57:06,167 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-2:ActivateProjectTool
+INFO  2025-11-12 18:57:06,167 [Task-2:ActivateProjectTool] serena.task_executor:start:360 - Task-2:ActivateProjectTool starting ...
+INFO  2025-11-12 18:57:06,168 [Task-2:ActivateProjectTool] serena.tools.tools_base:_log_tool_application:205 - activate_project: project='鸽梦（无 ops）'
+INFO  2025-11-12 18:57:06,168 [Task-2:ActivateProjectTool] serena.config.serena_config:start:360 - Loading project instance for RegisteredProject[project_root=/Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）, project_config=ProjectConfig[project_name=鸽梦（无 ops）]] starting ...
+INFO  2025-11-12 18:57:06,169 [Task-2:ActivateProjectTool] serena.util.file_system:start:360 - Loading of .gitignore files starting ...
+INFO  2025-11-12 18:57:06,169 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/.gitignore
+INFO  2025-11-12 18:57:06,181 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/build_env_py313/.gitignore
+INFO  2025-11-12 18:57:06,183 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/build_env/.gitignore
+INFO  2025-11-12 18:57:06,183 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/.serena/.gitignore
+INFO  2025-11-12 18:57:06,188 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/archive/imported_sources/.gitignore
+INFO  2025-11-12 18:57:06,204 [Task-2:ActivateProjectTool] serena.util.file_system:_load_gitignore_files:148 - Processing .gitignore file: /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/archive/imported_sources/gemeng2-0.7.0/.gitignore
+INFO  2025-11-12 18:57:06,513 [Task-2:ActivateProjectTool] serena.util.file_system:stop:367 - Loading of .gitignore files completed in 0.344 seconds
+INFO  2025-11-12 18:57:06,516 [Task-2:ActivateProjectTool] serena.config.serena_config:stop:367 - Loading project instance for RegisteredProject[project_root=/Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）, project_config=ProjectConfig[project_name=鸽梦（无 ops）]] completed in 0.348 seconds
+INFO  2025-11-12 18:57:06,516 [Task-2:ActivateProjectTool] serena.agent:load_project_from_path_or_name:446 - Found registered project '鸽梦（无 ops）' at path /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）
+INFO  2025-11-12 18:57:06,516 [Task-2:ActivateProjectTool] serena.agent:_activate_project:419 - Activating 鸽梦（无 ops） at /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）
+INFO  2025-11-12 18:57:06,516 [Task-2:ActivateProjectTool] serena.agent:_update_active_tools:382 - Active tools (23): activate_project, check_onboarding_performed, delete_memory, edit_memory, find_file, find_referencing_symbols, find_symbol, get_current_config, get_symbols_overview, initial_instructions, insert_after_symbol, insert_before_symbol, list_dir, list_memories, onboarding, read_memory, rename_symbol, replace_symbol_body, search_for_pattern, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, write_memory
+INFO  2025-11-12 18:57:06,516 [Task-2:ActivateProjectTool] serena.task_executor:issue_task:192 - Scheduling Task-3:init_language_server_manager
+INFO  2025-11-12 18:57:06,525 [Task-2:ActivateProjectTool] serena.tools.tools_base:task:278 - Result: The project with name '鸽梦（无 ops）' at /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1） is activated.
+Programming languages: python; file encoding: utf-8
+Available project memories: ["\u6700\u9ad8\u6307\u793a_\u4e2d\u6587\u8f93\u51fa\u5f3a\u5236_20251007_1708", "\u6700\u9ad8\u4f18\u5148\u7ea7\u5de5\u4f5c\u6307\u4ee4_\u4e0a\u4e0b\u6587\u7ba1\u7406_20250925", "codex_serena_playbook", "\u5bf9\u8bdd\u8bed\u8a00\u8981\u6c42_\u6700\u9ad8\u6307\u4ee4", "\u89c4\u5212\u8bb0\u5fc6\u5386\u53f2\u5f52\u6863_20251112"]
+Use the `read_memory` tool to read these memories later if they are relevant to the task.
+INFO  2025-11-12 18:57:06,525 [Task-2:ActivateProjectTool] serena.task_executor:stop:367 - Task-2:ActivateProjectTool completed in 0.358 seconds
+INFO  2025-11-12 18:57:06,526 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-3:init_language_server_manager
+INFO  2025-11-12 18:57:06,526 [Task-3:init_language_server_manager] serena.task_executor:start:360 - Task-3:init_language_server_manager starting ...
+INFO  2025-11-12 18:57:06,527 [Task-3:init_language_server_manager] serena.agent:start:360 - Language server initialization starting ...
+INFO  2025-11-12 18:57:06,527 [Task-3:init_language_server_manager] serena.project:create_language_server_manager:384 - Creating language server manager for /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）
+INFO  2025-11-12 18:57:06,527 [StartLS:python] sensai.util.logging:start:360 - Language server startup (language=python) starting ...
+INFO  2025-11-12 18:57:06,527 [StartLS:python] serena.ls_manager:create_language_server:44 - Creating language server instance for /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）, language=python.
+INFO  2025-11-12 18:57:06,619 [StartLS:python] solidlsp:load_cache:1597 - Loading document symbols cache from /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/.serena/cache/python/document_symbols_cache_v23-06-25.pkl
+INFO  2025-11-12 18:57:06,648 [StartLS:python] solidlsp:load_cache:1601 - Loaded 116 document symbols from cache.
+INFO  2025-11-12 18:57:06,651 [StartLS:python] solidlsp:start:1689 - Starting language server with language python for /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）
+INFO  2025-11-12 18:57:06,651 [StartLS:python] solidlsp:_start_server:172 - Starting pyright-langserver server process
+INFO  2025-11-12 18:57:06,651 [StartLS:python] solidlsp.ls_handler:start:193 - Starting language server process via command: python -m pyright.langserver --stdio
+INFO  2025-11-12 18:57:06,654 [StartLS:python] solidlsp:_start_server:178 - Sending initialize request from LSP client to pyright server and awaiting response
+INFO  2025-11-12 18:57:06,811 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Pyright language server 1.1.407 starting
+INFO  2025-11-12 18:57:06,811 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Server root directory: file:///Users/yunchang/.cache/uv/archive-v0/pBcXGxEvKZSm_v_bfg6q_/lib/python3.12/site-packages/pyright/dist/dist
+INFO  2025-11-12 18:57:06,813 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Starting service instance "鸽梦（V1.0.1）"
+INFO  2025-11-12 18:57:06,813 [StartLS:python] solidlsp:_start_server:183 - Received initialize response from pyright server: {"capabilities": {"textDocumentSync": 2, "definitionProvider": {"workDoneProgress": True}, "declarationProvider": {"workDoneProgress": True}, "typeDefinitionProvider": {"workDoneProgress": True}, "referencesProvider": {"workDoneProgress": True}, "documentSymbolProvider": {"workDoneProgress": True}, "workspaceSymbolProvider": {"workDoneProgress": True}, "hoverProvider": {"workDoneProgress": True}, "documentHighlightProvider": {"workDoneProgress": True}, "renameProvider": {"prepareProvider": True, "workDoneProgress": True}, "completionProvider": {"triggerCharacters": [".", "[", """, """], "resolveProvider": True, "workDoneProgress": True, "completionItem": {"labelDetailsSupport": True}}, "signatureHelpProvider": {"triggerCharacters": ["(", ",", ")"], "workDoneProgress": True}, "codeActionProvider": {"codeActionKinds": ["quickfix", "source.organizeImports"], "workDoneProgress": True}, "executeCommandProvider": {"commands": [], "workDoneProgress": True}, "callHierarchyProvider": True, "workspace": {"workspaceFolders": {"supported": True, "changeNotifications": True}}}}
+INFO  2025-11-12 18:57:06,813 [StartLS:python] solidlsp:_start_server:195 - Waiting for Pyright to complete initial workspace analysis...
+INFO  2025-11-12 18:57:06,883 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: No include entries specified; assuming /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）
+INFO  2025-11-12 18:57:06,883 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding **/node_modules
+INFO  2025-11-12 18:57:06,884 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding **/__pycache__
+INFO  2025-11-12 18:57:06,884 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding **/.*
+INFO  2025-11-12 18:57:06,884 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Assuming Python version 3.12.9.final.0
+INFO  2025-11-12 18:57:07,089 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/build_env
+INFO  2025-11-12 18:57:07,089 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/build_env310
+INFO  2025-11-12 18:57:07,090 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Auto-excluding /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/build_env_py313
+INFO  2025-11-12 18:57:07,090 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Headers" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/include/python3.13"
+INFO  2025-11-12 18:57:07,090 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources"
+INFO  2025-11-12 18:57:07,090 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/include/python3.13" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/include/python3.13"
+INFO  2025-11-12 18:57:07,706 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/share/doc/python3.13/html" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources/English.lproj/Documentation"
+INFO  2025-11-12 18:57:07,706 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/dist/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E4%BD%93%E9%AA%8C%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13"
+INFO  2025-11-12 18:57:07,913 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/release/macos/official/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E6%AD%A3%E5%BC%8F%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/release/macos/official/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E6%AD%A3%E5%BC%8F%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources"
+INFO  2025-11-12 18:57:07,913 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/release/macos/official/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E6%AD%A3%E5%BC%8F%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/release/macos/official/%E9%B8%BD%E6%A2%A6Godream_v1.0.1_%E6%AD%A3%E5%BC%8F%E7%89%88.app/Contents/Frameworks/Python.framework/Versions/3.13"
+INFO  2025-11-12 18:57:08,052 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtCore.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtCore.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,052 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtCore.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtCore.framework/Versions/5"
+INFO  2025-11-12 18:57:08,052 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtDBus.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtDBus.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,053 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtDBus.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtDBus.framework/Versions/5"
+INFO  2025-11-12 18:57:08,053 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtGui.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtGui.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,053 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtGui.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtGui.framework/Versions/5"
+INFO  2025-11-12 18:57:08,054 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimedia.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimedia.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,054 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimedia.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimedia.framework/Versions/5"
+INFO  2025-11-12 18:57:08,054 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimediaWidgets.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimediaWidgets.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,054 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimediaWidgets.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtMultimediaWidgets.framework/Versions/5"
+INFO  2025-11-12 18:57:08,055 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtNetwork.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtNetwork.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,055 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtNetwork.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtNetwork.framework/Versions/5"
+INFO  2025-11-12 18:57:08,055 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtOpenGL.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtOpenGL.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,055 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtOpenGL.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtOpenGL.framework/Versions/5"
+INFO  2025-11-12 18:57:08,056 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtPrintSupport.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtPrintSupport.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,056 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtPrintSupport.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtPrintSupport.framework/Versions/5"
+INFO  2025-11-12 18:57:08,056 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQml.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQml.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,056 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQml.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQml.framework/Versions/5"
+INFO  2025-11-12 18:57:08,057 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQmlModels.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQmlModels.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,057 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQmlModels.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQmlModels.framework/Versions/5"
+INFO  2025-11-12 18:57:08,057 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQuick.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQuick.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,057 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQuick.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtQuick.framework/Versions/5"
+INFO  2025-11-12 18:57:08,058 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtSvg.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtSvg.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,058 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtSvg.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtSvg.framework/Versions/5"
+INFO  2025-11-12 18:57:08,058 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWebSockets.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWebSockets.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,059 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWebSockets.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWebSockets.framework/Versions/5"
+INFO  2025-11-12 18:57:08,059 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWidgets.framework/Versions/5/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWidgets.framework/Versions/5/Resources"
+INFO  2025-11-12 18:57:08,059 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWidgets.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib/QtWidgets.framework/Versions/5"
+INFO  2025-11-12 18:57:08,059 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/Python.framework/Versions/3.13/Resources"
+INFO  2025-11-12 18:57:08,060 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/Python.framework/Versions/Current" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/Python.framework/Versions/3.13"
+INFO  2025-11-12 18:57:08,060 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/PIL" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PIL"
+INFO  2025-11-12 18:57:08,061 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/PyQt5/Qt5/lib" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/lib"
+INFO  2025-11-12 18:57:08,061 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/PyQt5/Qt5/plugins" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/PyQt5/Qt5/plugins"
+INFO  2025-11-12 18:57:08,062 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/PyQt5/Qt5/translations" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/PyQt5/Qt5/translations"
+INFO  2025-11-12 18:57:08,062 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/Python.framework" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/Python.framework"
+INFO  2025-11-12 18:57:08,063 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/aiohttp" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/aiohttp"
+INFO  2025-11-12 18:57:08,063 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/attrs-25.4.0.dist-info" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/attrs-25.4.0.dist-info"
+INFO  2025-11-12 18:57:08,063 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/certifi" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/certifi"
+INFO  2025-11-12 18:57:08,064 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/charset_normalizer" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/charset_normalizer"
+INFO  2025-11-12 18:57:08,064 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/components" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/components"
+INFO  2025-11-12 18:57:08,065 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/config" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/config"
+INFO  2025-11-12 18:57:08,065 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/data" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/data"
+INFO  2025-11-12 18:57:08,065 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/gapi" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/gapi"
+INFO  2025-11-12 18:57:08,066 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/mat_wrapper" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/mat_wrapper"
+INFO  2025-11-12 18:57:08,066 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/misc" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/misc"
+INFO  2025-11-12 18:57:08,066 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/typing" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/typing"
+INFO  2025-11-12 18:57:08,066 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/utils" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/cv2/utils"
+INFO  2025-11-12 18:57:08,066 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/dateutil" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/dateutil"
+INFO  2025-11-12 18:57:08,067 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/edition/resources/bin" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/edition/resources/bin"
+INFO  2025-11-12 18:57:08,067 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/edition/resources/fonts" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/edition/resources/fonts"
+INFO  2025-11-12 18:57:08,067 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/frozenlist" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/frozenlist"
+INFO  2025-11-12 18:57:08,067 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/lib-dynload" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/lib-dynload"
+INFO  2025-11-12 18:57:08,067 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/modules" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/modules"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/multidict" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/multidict"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/numpy" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/numpy"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/numpy-2.2.6.dist-info" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/numpy-2.2.6.dist-info"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/pandas/_libs" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/pandas/_libs"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/pandas/io" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/pandas/io"
+INFO  2025-11-12 18:57:08,068 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/propcache" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/propcache"
+INFO  2025-11-12 18:57:08,069 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/pytz" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/pytz"
+INFO  2025-11-12 18:57:08,069 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/repository" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/repository"
+INFO  2025-11-12 18:57:08,069 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/setuptools" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/setuptools"
+INFO  2025-11-12 18:57:08,069 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/utils" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/utils"
+INFO  2025-11-12 18:57:08,069 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/version.py" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/version.py"
+INFO  2025-11-12 18:57:08,070 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Skipping recursive symlink "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Resources/yarl" -> "file:///Users/yunchang/Documents/AI%20%E7%BC%96%E7%A8%8B/%E9%B8%BD%E6%A2%A6%EF%BC%88V1.0.1%EF%BC%89/%E8%BF%87%E5%BE%80%E6%B5%8B%E8%AF%95%E7%89%88/GoDream%20Trial.app/Contents/Frameworks/yarl"
+INFO  2025-11-12 18:57:08,070 [LSP-stdout-reader:python] solidlsp:window_log_message:142 - LSP: window/logMessage: Found 36819 source files
+INFO  2025-11-12 18:57:08,070 [LSP-stdout-reader:python] solidlsp:window_log_message:147 - Pyright workspace scanning complete
+INFO  2025-11-12 18:57:08,070 [StartLS:python] solidlsp:_start_server:197 - Pyright initial analysis complete, server ready
+INFO  2025-11-12 18:57:08,070 [StartLS:python] sensai.util.logging:stop:367 - Language server startup (language=python) completed in 1.543 seconds
+INFO  2025-11-12 18:57:08,070 [Task-3:init_language_server_manager] serena.agent:stop:367 - Language server initialization completed in 1.544 seconds
+INFO  2025-11-12 18:57:08,070 [Task-3:init_language_server_manager] serena.task_executor:stop:367 - Task-3:init_language_server_manager completed in 1.544 seconds
+INFO  2025-11-12 18:57:52,699 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:57:52,699 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-4:ReadMemoryTool
+INFO  2025-11-12 18:57:52,705 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-4:ReadMemoryTool
+INFO  2025-11-12 18:57:52,706 [Task-4:ReadMemoryTool] serena.task_executor:start:360 - Task-4:ReadMemoryTool starting ...
+INFO  2025-11-12 18:57:52,706 [Task-4:ReadMemoryTool] serena.tools.tools_base:_log_tool_application:205 - read_memory: memory_file_name='规划记忆历史归档_20251112', max_answer_chars=-1
+INFO  2025-11-12 18:57:52,707 [Task-4:ReadMemoryTool] serena.tools.tools_base:task:278 - Result: ## 规划记忆历史归档（2025-11-12）
+
+共归档 83 条 2025-11 之前的规划/执行类记忆：
+
+- AGENTS分析与改进计划_20250929
+- Codex↔Serena 协作约定 v3（项目版）
+- Codex↔Serena协作约定v3
+- Day2完成状态与Day3规划_20250924
+- Day4修复上下文压缩_执行准备_20250925
+- Day4修复计划确认_准备执行_20250925
+- Day4修复进度_20250925_当前状态
+- Day4字体统系修复完成报告_20250925
+- Day4字体统系全面排查报告_20250925
+- Day4性能优化完成状态_20250924
+- Day4性能阶段回归基线_20250926
+- Day5_UI回滚说明_20250926
+- Day5_布局细化_20250926
+- Day5_性能基线更新_20250926
+- Day5_控件布局调整_20250926
+- Day5_适配器接入进展_20250926
+- Day5_阶段1审计_20250926
+- Day5_阶段2更新_20250926
+- Day5_阶段3修复_20250926
+- Day5_阶段4再验证_20250926
+- Day5_阶段4验证_20250926
+- Day5_阶段5记录_20250926
+- Day6_执行规划草案_20250926
+- Day6_阶段结果_20250926
+- GLMManager统一存储接入_20250928
+- GeMeng产品设计与开发规范_20250922
+- GeMeng项目UI优化和字体缩放功能实现_20250923
+- GeMeng项目参考图闪退修复记录_20250923
+- GeMeng项目存储统系重建记录_20250922
+- GeMeng项目当前问题清单_20250922
+- GeMeng项目深度分析_2025-09-22
+- HistoryRecord字典兼容修复_20250926
+- SeedanceManager统一存储接入_20250928
+- SeedanceManager统一存储接入实现_20250928
+- SeedreamManager统一存储接入_20250928
+- UI字体统重构方案
+- UI布局最高指令_20250926
+- UI组件替换约束指令_20250925
+- UI组件标准化重构进展_20250924
+- UI联测执行纪要_20251007_1730
+- UI阶段规划_20251002
+- UI阶段进展_20251002
+- compact_summary_20251002
+- mac_packaging_icon_security_policy
+- mac_win_watermark_plan_20251029
+- macos_packaging_plan
+- qt_app结构分析结果_20250924
+- qt_app重构计划_避免API爆炸_20250924
+- video_reference_visibility_analysis
+- 下一阶段执行规划_20251007
+- 主程序冲突问题根因分析_20250925
+- 主程序规范化完整方案_20250925
+- 交接提示_20251002
+- 历史卡片点击回调修复_20250928
+- 历史瀑布流优化模块归档_20250928
+- 参考图显示修复_20251007_2339
+- 参考图画廊优化_20251008_1652
+- 参考图能力重构_20251008_1613
+- 存储统系相对路径设计决策_2025-09-22
+- 存储统系重建完成_2025-09-22
+- 当前任务压缩上下文_20250930
+- 当前执行上下文快照_20250928
+- 当前窗口执行计划_20251007_1708
+- 待办_历史瀑布流虚拟化
+- 性能复检纪要_20251007_1738
+- 接力卡_20251008_2304
+- 数据迁移执行纪要_20251007_1724
+- 样式迁移完成状态_20250925
+- 窗口缩放调整实施_20251007
+- 窗口缩放问题诊断_20251007
+- 统一存储与UI绑定执行计划文档_20250928
+- 缩略图角色兼容修复_20250926
+- 虚拟化恢复纪要_20251007_1749
+- 视频历史视图状态修复_20250929
+- 视频参考图修复完成_20250930
+- 视频参考图面板恢复_20250929
+- 视频索引清理记录_20251007_1734
+- 视频详情路径修复_20250928
+- 阶段推进规划与风险评估_20250928
+- 阶段规划更新_20250928
+- 项目启动架构说明_qt_app主程序_20250925
+- 项目实施计划_存储统系重建_2025-09-22
+- 鸽梦项目存储统系重建状态_20250922
+
+INFO  2025-11-12 18:57:52,708 [Task-4:ReadMemoryTool] serena.task_executor:stop:367 - Task-4:ReadMemoryTool completed in 0.003 seconds
+INFO  2025-11-12 18:58:10,507 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:58:10,507 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-5:ReadMemoryTool
+INFO  2025-11-12 18:58:10,566 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-5:ReadMemoryTool
+INFO  2025-11-12 18:58:10,566 [Task-5:ReadMemoryTool] serena.task_executor:start:360 - Task-5:ReadMemoryTool starting ...
+INFO  2025-11-12 18:58:10,566 [Task-5:ReadMemoryTool] serena.tools.tools_base:_log_tool_application:205 - read_memory: memory_file_name='macos_packaging_plan', max_answer_chars=-1
+INFO  2025-11-12 18:58:10,567 [Task-5:ReadMemoryTool] serena.tools.tools_base:task:278 - Result: Memory file macos_packaging_plan not found, consider creating it with the `write_memory` tool if you need it.
+INFO  2025-11-12 18:58:10,567 [Task-5:ReadMemoryTool] serena.task_executor:stop:367 - Task-5:ReadMemoryTool completed in 0.001 seconds
+INFO  2025-11-12 18:58:32,060 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest
+INFO  2025-11-12 18:58:35,182 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:58:35,182 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-6:FindFileTool
+INFO  2025-11-12 18:58:35,278 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-6:FindFileTool
+INFO  2025-11-12 18:58:35,278 [Task-6:FindFileTool] serena.task_executor:start:360 - Task-6:FindFileTool starting ...
+INFO  2025-11-12 18:58:35,279 [Task-6:FindFileTool] serena.tools.tools_base:_log_tool_application:205 - find_file: file_mask='build_app.sh', relative_path='packaging'
+INFO  2025-11-12 18:58:35,793 [Task-6:FindFileTool] serena.tools.tools_base:task:278 - Result: {"files": ["packaging/macos/build_app.sh"]}
+INFO  2025-11-12 18:58:35,793 [Task-6:FindFileTool] serena.task_executor:stop:367 - Task-6:FindFileTool completed in 0.515 seconds
+INFO  2025-11-12 18:59:23,079 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 18:59:23,080 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-7:FindFileTool
+INFO  2025-11-12 18:59:23,097 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-7:FindFileTool
+INFO  2025-11-12 18:59:23,097 [Task-7:FindFileTool] serena.task_executor:start:360 - Task-7:FindFileTool starting ...
+INFO  2025-11-12 18:59:23,098 [Task-7:FindFileTool] serena.tools.tools_base:_log_tool_application:205 - find_file: file_mask='setup.py', relative_path='packaging/macos'
+INFO  2025-11-12 18:59:23,105 [Task-7:FindFileTool] serena.tools.tools_base:task:278 - Result: {"files": ["packaging/macos/setup.py"]}
+INFO  2025-11-12 18:59:23,106 [Task-7:FindFileTool] serena.task_executor:stop:367 - Task-7:FindFileTool completed in 0.009 seconds
+INFO  2025-11-12 19:00:37,155 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 19:00:37,156 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-8:ListDirTool
+INFO  2025-11-12 19:00:37,168 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-8:ListDirTool
+INFO  2025-11-12 19:00:37,168 [Task-8:ListDirTool] serena.task_executor:start:360 - Task-8:ListDirTool starting ...
+INFO  2025-11-12 19:00:37,168 [Task-8:ListDirTool] serena.tools.tools_base:_log_tool_application:205 - list_dir: relative_path='dist', recursive=False, skip_ignored_files=False, max_answer_chars=-1
+INFO  2025-11-12 19:00:37,169 [Task-8:ListDirTool] serena.tools.tools_base:task:278 - Result: {"dirs": ["dist/\u9e3d\u68a6Godream_v1.0.1_\u4f53\u9a8c\u7248.app"], "files": []}
+INFO  2025-11-12 19:00:37,170 [Task-8:ListDirTool] serena.task_executor:stop:367 - Task-8:ListDirTool completed in 0.002 seconds
+INFO  2025-11-12 19:00:56,155 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 19:00:56,155 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-9:ListDirTool
+INFO  2025-11-12 19:00:56,229 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-9:ListDirTool
+INFO  2025-11-12 19:00:56,229 [Task-9:ListDirTool] serena.task_executor:start:360 - Task-9:ListDirTool starting ...
+INFO  2025-11-12 19:00:56,229 [Task-9:ListDirTool] serena.tools.tools_base:_log_tool_application:205 - list_dir: relative_path='.', recursive=False, skip_ignored_files=False, max_answer_chars=-1
+INFO  2025-11-12 19:00:56,232 [Task-9:ListDirTool] serena.tools.tools_base:task:278 - Result: {"dirs": ["packaging", "build_env_py313", "repository", ".trae", "tools", "\u706b\u5c71\u5f15\u64ce API \u8c03\u7528\u6587\u6863", "archive", ".roo", "dist", "config", "build_env", ".serena", "edition", "\u8fc7\u5f80\u6d4b\u8bd5\u7248", "build_env310", "utils", "release", "__pycache__", "docs", "GemengGodream.egg-info", "components", "run_logs", "videos", ".style_backup", "logs", ".serena-cli", ".venv", "scripts", ".winenv", "GoDream.iconset", "chats", "build", ".git", ".vscode", "modules", "data", "thumbnails"], "files": ["build_trial.log", "requirements_py313.txt", "config_api_trial.py", ".DS_Store", "version.py", "LICENSE", "requirements.txt", "GoDream_Official.spec", "qt_app.py", "Win_GoDream.spec", "_tmp_lines.txt", "\u9e3d\u68a6 GoDream.spec", "config_api_example.py", "ffmpeg-8.0.tar.xz", "GeMeng.spec", "README.md", "qt_app.py.backup_before_optimization", "config_api.py", "codex\u5bf9\u8bdd\u8bb0\u5f550922.md", "thin_binary.log", "qt_app.py.backup", ".gitignore", "style_migration_report.md", ".env", "CONTRIBUTING.md", "build_win.log", "Godream\u56fe\u6807\uff08\u6b63\u5f0f\u7248\uff09.png", "qt_app.py.backup_20250924", "\u9e3d\u68a6Godream_v1.0.1_\u6b63\u5f0f\u7248.spec", "qt_app.py.backup_logger_fix_20241030", "qt_app.py.backup_logger_fix_", ".env.example", "AGENTS.md", "config_api_production.py", "main.py", "Godream\u56fe\u6807\uff08T\u7248\uff09.png", "style_migration_report_dry_run.md", ".vercelignore", "qt_app.py.backup_visibility_fix_20250930_101200", "logger_errors_fix_plan.md", "qt_app.py.backup_waterfall_v27", "qt_app.py.backup_20241007_font_scaling_fix", "clear_cache_for_testing.bat"]}
+INFO  2025-11-12 19:00:56,233 [Task-9:ListDirTool] serena.task_executor:stop:367 - Task-9:ListDirTool completed in 0.003 seconds
+INFO  2025-11-12 19:02:58,319 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 19:02:58,320 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-10:FindSymbolTool
+INFO  2025-11-12 19:02:58,421 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-10:FindSymbolTool
+INFO  2025-11-12 19:02:58,421 [Task-10:FindSymbolTool] serena.task_executor:start:360 - Task-10:FindSymbolTool starting ...
+INFO  2025-11-12 19:02:58,421 [Task-10:FindSymbolTool] serena.tools.tools_base:_log_tool_application:205 - find_symbol: name_path='/', depth=1, relative_path='packaging/macos/setup.py', include_body=False, include_kinds=[], exclude_kinds=[], substring_matching=False, max_answer_chars=-1
+INFO  2025-11-12 19:02:58,512 [Task-10:FindSymbolTool] serena.tools.tools_base:task:278 - Result: []
+INFO  2025-11-12 19:02:58,513 [Task-10:FindSymbolTool] solidlsp:save_cache:1579 - Saving updated document symbols cache to /Users/yunchang/Documents/AI 编程/鸽梦（V1.0.1）/.serena/cache/python/document_symbols_cache_v23-06-25.pkl
+INFO  2025-11-12 19:02:58,554 [Task-10:FindSymbolTool] serena.task_executor:stop:367 - Task-10:FindSymbolTool completed in 0.133 seconds
+INFO  2025-11-12 19:03:16,238 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest
+INFO  2025-11-12 19:03:17,548 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type CallToolRequest
+INFO  2025-11-12 19:03:17,548 [MainThread] serena.task_executor:issue_task:192 - Scheduling Task-11:GetSymbolsOverviewTool
+INFO  2025-11-12 19:03:17,596 [SerenaAgentTaskExecutor] serena.task_executor:_process_task_queue:123 - Starting execution of Task-11:GetSymbolsOverviewTool
+INFO  2025-11-12 19:03:17,596 [Task-11:GetSymbolsOverviewTool] serena.task_executor:start:360 - Task-11:GetSymbolsOverviewTool starting ...
+INFO  2025-11-12 19:03:17,596 [Task-11:GetSymbolsOverviewTool] serena.tools.tools_base:_log_tool_application:205 - get_symbols_overview: relative_path='packaging/macos/setup.py', max_answer_chars=-1
+INFO  2025-11-12 19:03:17,598 [Task-11:GetSymbolsOverviewTool] serena.tools.tools_base:task:278 - Result: [{"name_path": "project_root", "kind": 13}, {"name_path": "default_version", "kind": 13}, {"name_path": "version_file", "kind": 13}, {"name_path": "spec", "kind": 13}, {"name_path": "version_module", "kind": 13}, {"name_path": "APP_NAME", "kind": 14}, {"name_path": "APP_VERSION", "kind": 14}, {"name_path": "APP_BUNDLE_ID", "kind": 14}, {"name_path": "APP_MAIN_SCRIPT", "kind": 14}, {"name_path": "INFO_PLIST", "kind": 14}, {"name_path": "RESOURCE_FILE_NAMES", "kind": 14}, {"name_path": "RESOURCE_FILES", "kind": 14}, {"name_path": "DATA_FILES", "kind": 14}, {"name_path": "PACKAGES", "kind": 14}, {"name_path": "EXCLUDES", "kind": 14}, {"name_path": "INCLUDES", "kind": 14}, {"name_path": "icon_override", "kind": 13}, {"name_path": "default_icon_path", "kind": 13}, {"name_path": "ICON_PATH", "kind": 14}, {"name_path": "OPTIONS", "kind": 14}]
+INFO  2025-11-12 19:03:17,599 [Task-11:GetSymbolsOverviewTool] serena.task_executor:stop:367 - Task-11:GetSymbolsOverviewTool completed in 0.003 seconds
+INFO  2025-11-12 19:03:35,973 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest
+INFO  2025-11-12 19:03:35,994 [MainThread] mcp.server.lowlevel.server:_handle_request:625 - Processing request of type ListToolsRequest

@@ -1,0 +1,6 @@
+{"timestamp":"2025-09-17T05:33:25.621Z","type":"session_meta","payload":{"id":"5450c558-b97a-4c94-88b4-211fa70cb52c","timestamp":"2025-09-17T05:33:25.607Z","cwd":"/Users/yunchang","originator":"codex_cli_rs","cli_version":"0.36.0","instructions":null}}
+{"timestamp":"2025-09-17T05:33:25.621Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"<environment_context>\n  <cwd>/Users/yunchang</cwd>\n  <approval_policy>on-request</approval_policy>\n  <sandbox_mode>read-only</sandbox_mode>\n  <network_access>restricted</network_access>\n  <shell>zsh</shell>\n</environment_context>"}]}}
+{"timestamp":"2025-09-17T05:33:27.678Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"nihao"}]}}
+{"timestamp":"2025-09-17T05:33:27.678Z","type":"event_msg","payload":{"type":"user_message","message":"nihao","kind":"plain"}}
+{"timestamp":"2025-09-17T05:33:27.678Z","type":"turn_context","payload":{"cwd":"/Users/yunchang","approval_policy":"on-request","sandbox_policy":{"mode":"read-only"},"model":"gpt-5-codex","effort":"high","summary":"auto"}}
+{"timestamp":"2025-09-17T05:33:38.056Z","type":"event_msg","payload":{"type":"turn_aborted","reason":"interrupted"}}

@@ -1,0 +1,18 @@
+INFO  2025-11-11 19:22:35,665 [MainThread] serena.cli:start_mcp_server:166 - Initializing Serena MCP server
+INFO  2025-11-11 19:22:35,665 [MainThread] serena.cli:start_mcp_server:167 - Storing logs in /Users/yunchang/.serena/logs/2025-11-11/mcp_20251111-192235.txt
+INFO  2025-11-11 19:22:35,666 [MainThread] serena.config.serena_config:from_config_file:406 - Loading Serena configuration from /Users/yunchang/.serena/serena_config.yml
+ERROR 2025-11-11 19:22:35,670 [MainThread] serena.agent:show_fatal_exception_safe:49 - Fatal exception: 'language'
+Traceback (most recent call last):
+  File "/Users/yunchang/.local/share/uv/tools/serena-agent/lib/python3.12/site-packages/serena/mcp.py", line 263, in create_mcp_server
+    config = SerenaConfig.from_config_file()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/yunchang/.local/share/uv/tools/serena-agent/lib/python3.12/site-packages/serena/config/serena_config.py", line 432, in from_config_file
+    project_config = ProjectConfig.load(path)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/yunchang/.local/share/uv/tools/serena-agent/lib/python3.12/site-packages/serena/config/serena_config.py", line 266, in load
+    return cls._from_dict(yaml_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/yunchang/.local/share/uv/tools/serena-agent/lib/python3.12/site-packages/serena/config/serena_config.py", line 228, in _from_dict
+    language_str = data["language"].lower()
+                   ~~~~^^^^^^^^^^^^
+KeyError: 'language'

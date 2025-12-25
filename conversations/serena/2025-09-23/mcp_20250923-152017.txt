@@ -1,0 +1,2 @@
+INFO  2025-09-23 15:20:17,459 [MainThread] serena.cli:start_mcp_server:172 - Initializing Serena MCP server
+INFO  2025-09-23 15:20:17,459 [MainThread] serena.cli:start_mcp_server:173 - Storing logs in /Users/yunchang/.serena/logs/2025-09-23/mcp_20250923-152017.txt

@@ -1,0 +1,589 @@
+     1→#!/usr/bin/env python3
+     2→# -*- coding: utf-8 -*-
+     3→"""
+     4→视频卡片组件（从 qt_app.py 拆分）.
+     5→
+     6→DEPRECATED: VideoCard 类已废弃，仅在 archive/ 中的旧代码使用。
+     7→现代视图使用 components/delegates/video_card_delegate.py 中的 VideoCardDelegate。
+     8→
+     9→注意: set_video_detail_handler 函数仍在主代码中使用，请勿删除。
+    10→"""
+    11→
+    12→from __future__ import annotations
+    13→
+    14→import os
+    15→from datetime import datetime
+    16→from typing import Any, Callable, Dict, List, Optional
+    17→
+    18→from PySide6.QtCore import QEvent, Qt, Signal, QTimer
+    19→from PySide6.QtGui import QPixmap
+    20→from PySide6.QtWidgets import (
+    21→    QMenu,
+    22→    QApplication,
+    23→    QFileDialog,
+    24→    QLabel,
+    25→    QFrame,
+    26→    QMessageBox,
+    27→    QSizePolicy,
+    28→    QVBoxLayout,
+    29→    QHBoxLayout,
+    30→    QPushButton,
+    31→)
+    32→from PySide6.QtGui import QAction
+    33→
+    34→from loguru import logger
+    35→from utils.reference_assets import summarize_reference_assets
+    36→from utils.reference_display import (
+    37→    build_resolution_text,
+    38→    get_model_display_name,
+    39→    pick_model_code,
+    40→)
+    41→from utils.task_runner import CancelToken, task_runner
+    42→from utils.ui_utils import DpiScaler
+    43→from utils.style_system import unified_style_system
+    44→
+    45→DetailHandler = Optional[Callable[[Dict[str, Any], List[Dict[str, Any]], int, QFrame], None]]
+    46→_video_detail_handler: DetailHandler = None
+    47→
+    48→
+    49→def set_video_detail_handler(handler: DetailHandler) -> None:
+    50→    """注册点击卡片时的详情弹窗回调。"""
+    51→    global _video_detail_handler
+    52→    _video_detail_handler = handler
+    53→
+    54→
+    55→class VideoCard(QFrame):
+    56→    """视频卡片组件"""
+    57→    thumbnail_path_ready = Signal(str)
+    58→
+    59→    def __init__(self, video_data: Dict[str, Any], video_list: List[Dict[str, Any]] = None, current_index: int = 0, parent=None):
+    60→        super().__init__(parent)
+    61→        self.video_data = video_data
+    62→        self.video_list = video_list or [video_data]  # 视频列表
+    63→        self.current_index = current_index  # 当前视频索引
+    64→        self._thumb_cancel = CancelToken()
+    65→        # 原比例显示（统一新逻辑）
+    66→        self._video_pix = None  # 原图像素缓存用于resize重算
+    67→        self._reference_info = summarize_reference_assets(self.video_data)
+    68→        try:
+    69→            self.video_data['_reference_info'] = self._reference_info
+    70→        except Exception:
+    71→            pass
+    72→        self._ref_badge: Optional[QLabel] = None
+    73→        self.setup_ui()
+    74→        self._overlay: Optional[QLabel] = None
+    75→        self._is_generating = False
+    76→        self._elapsed_timer: Optional[QTimer] = None
+    77→        self._elapsed_seconds = 0
+    78→        self._thumbnail_requested = False
+    79→        
+    80→    def setup_ui(self):
+    81→        """设置UI"""
+    82→        self.setFrameStyle(QFrame.Box)
+    83→        self.setStyleSheet("""
+    84→            QFrame {
+    85→                background-color: #1a1a1a;
+    86→                border: 1px solid #3a3a5e;
+    87→                border-radius: 8px;
+    88→                margin: 5px;
+    89→            }
+    90→            QFrame:hover {
+    91→                border-color: #FF6B35;
+    92→            }
+    93→        """)
+    94→        
+    95→        layout = QVBoxLayout(self)
+    96→        layout.setContentsMargins(10, 10, 10, 10)
+    97→        
+    98→        # 视频缩略图显示（不再固定200×200，按列宽自适应）
+    99→        self.video_label = QLabel()
+   100→        try:
+   101→            self.video_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+   102→        except Exception:
+   103→            pass
+   104→        self.video_label.setAlignment(Qt.AlignCenter)
+   105→        try:
+   106→            radius = DpiScaler.px(4)
+   107→            self.video_label.setStyleSheet(f"border: 1px solid #ccc; border-radius: {radius}px;")
+   108→        except Exception:
+   109→            self.video_label.setStyleSheet("border: 1px solid #ccc; border-radius: 4px;")
+   110→        try:
+   111→            self.video_label.installEventFilter(self)
+   112→        except Exception:
+   113→            pass
+   114→        self._ref_badge = QLabel(self.video_label)
+   115→        self._ref_badge.setAlignment(Qt.AlignCenter)
+   116→        self._ref_badge.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+   117→        try:
+   118→            badge_radius = max(8, DpiScaler.px(10))
+   119→        except Exception:
+   120→            badge_radius = 10
+   121→        self._ref_badge.setStyleSheet(
+   122→            f"""
+   123→            QLabel {{
+   124→                background-color: rgba(0, 120, 212, 210);
+   125→                color: #ffffff;
+   126→                border-radius: {badge_radius}px;
+   127→                padding: 2px 6px;
+   128→                ;
+   129→            }}
+   130→            """
+   131→        )
+   132→        self._ref_badge.hide()
+   133→
+   134→        # 连接信号，真实加载移至 showEvent
+   135→        try:
+   136→            self.thumbnail_path_ready.connect(self._apply_thumbnail)
+   137→        except Exception:
+   138→            pass
+   139→
+   140→        self.video_label.setText("🎬\n等待加载")
+   141→        self.video_label.setStyleSheet("""
+   142→                QLabel { border: 1px solid #ccc; border-radius: 4px; ; color: #FF6B35; background-color: #2a2a2a; }
+   143→            """)
+   144→
+   145→        layout.addWidget(self.video_label)
+   146→        self._apply_reference_badge()
+   147→        
+   148→        # 信息区域
+   149→        info_layout = QVBoxLayout()
+   150→        
+   151→        # 提示词（截断显示）
+   152→        prompt = self.video_data.get('prompt', '无提示词')
+   153→        prompt_label = QLabel(f"提示词: {prompt[:30]}..." if len(prompt) > 30 else f"提示词: {prompt}")
+   154→        prompt_label.setWordWrap(True)
+   155→        try:
+   156→            prompt_label.setStyleSheet("color: #ffffff;")  # Font size handled by unified style system
+   157→        except Exception:
+   158→            prompt_label.setStyleSheet("; color: #ffffff;")
+   159→        info_layout.addWidget(prompt_label)
+   160→        
+   161→        # 生成时间
+   162→        created_at = self.video_data.get('created_at', '')
+   163→        if created_at:
+   164→            try:
+   165→                dt = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+   166→                time_str = dt.strftime('%Y-%m-%d %H:%M')
+   167→            except:
+   168→                time_str = created_at[:16] if len(created_at) > 16 else created_at
+   169→        else:
+   170→            time_str = '未知时间'
+   171→        
+   172→        time_label = QLabel(f"时间: {time_str}")
+   173→        try:
+   174→            time_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+   175→        except Exception:
+   176→            time_label.setStyleSheet("; color: #cccccc;")
+   177→        info_layout.addWidget(time_label)
+   178→        
+   179→        # 视频信息 - 从 parameters 中获取参数（兼容顶级字段）
+   180→        params = self.video_data.get('parameters', {}) or {}
+   181→        duration = params.get('duration') or self.video_data.get('duration', '未知')
+   182→        resolution = build_resolution_text(self.video_data)
+   183→        model_code = pick_model_code(self.video_data)
+   184→        model_display_name = get_model_display_name(model_code)
+   185→        
+   186→        duration_label = QLabel(f"时长: {duration}秒")
+   187→        try:
+   188→            duration_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+   189→        except Exception:
+   190→            duration_label.setStyleSheet("; color: #cccccc;")
+   191→        info_layout.addWidget(duration_label)
+   192→        
+   193→        resolution_label = QLabel(f"分辨率: {resolution}")
+   194→        try:
+   195→            resolution_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+   196→        except Exception:
+   197→            resolution_label.setStyleSheet("; color: #cccccc;")
+   198→        info_layout.addWidget(resolution_label)
+   199→        
+   200→        model_label = QLabel(f"模型: {model_display_name}")
+   201→        try:
+   202→            model_label.setStyleSheet("color: #cccccc;")  # Font size handled by unified style system
+   203→        except Exception:
+   204→            model_label.setStyleSheet("; color: #cccccc;")
+   205→        info_layout.addWidget(model_label)
+   206→        
+   207→        layout.addLayout(info_layout)
+   208→        
+   209→        # 设置右键菜单
+   210→        self.setContextMenuPolicy(Qt.CustomContextMenu)
+   211→        self.customContextMenuRequested.connect(self.show_context_menu)
+   212→
+   213→    def showEvent(self, event):
+   214→        """在卡片进入视口时触发缩略图加载。"""
+   215→        super().showEvent(event)
+   216→        if not self._thumbnail_requested:
+   217→            self.load_video_thumbnail()
+   218→
+   219→    def set_generating(self, is_generating: bool):
+   220→        """设置生成中覆盖状态。"""
+   221→        self._is_generating = bool(is_generating)
+   222→        if is_generating:
+   223→            self._elapsed_seconds = 0
+   224→            self._show_overlay()
+   225→            self._start_elapsed_timer()
+   226→        else:
+   227→            self._hide_overlay()
+   228→            self._stop_elapsed_timer()
+   229→
+   230→    def _show_overlay(self):
+   231→        if not self._overlay:
+   232→            self._overlay = QLabel(self.video_label)
+   233→            self._overlay.setAlignment(Qt.AlignCenter)
+   234→            self._overlay.setStyleSheet(
+   235→                """
+   236→                background-color: rgba(0, 0, 0, 0.75);
+   237→                color: #ffffff;
+   238→                font-size: 14px;
+   239→                font-weight: bold;
+   240→            """
+   241→            )
+   242→            self._overlay.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+   243→        self._overlay.setText(f"生成中 {self._elapsed_seconds}s")
+   244→        self._overlay.setGeometry(0, 0, self.video_label.width(), self.video_label.height())
+   245→        self._overlay.show()
+   246→
+   247→    def _hide_overlay(self):
+   248→        if self._overlay:
+   249→            self._overlay.hide()
+   250→
+   251→    def _start_elapsed_timer(self):
+   252→        if not self._elapsed_timer:
+   253→            self._elapsed_timer = QTimer(self)
+   254→            self._elapsed_timer.timeout.connect(self._update_elapsed)
+   255→        if not self._elapsed_timer.isActive():
+   256→            self._elapsed_timer.start(1000)
+   257→
+   258→    def _stop_elapsed_timer(self):
+   259→        if self._elapsed_timer and self._elapsed_timer.isActive():
+   260→            self._elapsed_timer.stop()
+   261→        self._elapsed_seconds = 0
+   262→
+   263→    def _update_elapsed(self):
+   264→        self._elapsed_seconds += 1
+   265→        if self._overlay and self._overlay.isVisible():
+   266→            self._overlay.setText(f"生成中 {self._elapsed_seconds}s")
+   267→        
+   268→    def load_video_thumbnail(self):
+   269→        """异步加载/生成缩略图（TaskRunner）"""
+   270→        if self._thumbnail_requested:
+   271→            return
+   272→        self._thumbnail_requested = True
+   273→        try:
+   274→            thumb_existing = (self.video_data.get('thumbnail_path', '') or self.video_data.get('thumbnail_local_path', ''))
+   275→            if thumb_existing and os.path.exists(thumb_existing):
+   276→                self._apply_thumbnail(thumb_existing)
+   277→                return
+   278→
+   279→            video_path = self.video_data.get('absolute_path', '') or self.video_data.get('file_path', '') or self.video_data.get('file_path', '')
+   280→            if not (video_path and os.path.exists(video_path)):
+   281→                self.video_label.setText("视频不存在")
+   282→                self.video_label.setStyleSheet("""
+   283→                    QLabel { border: 1px solid #ccc; border-radius: 4px; ; color: #888; }
+   284→                """)
+   285→                return
+   286→
+   287→            file_id = self.video_data.get('file_id', '') or self.video_data.get('generation_id', '') or self.video_data.get('id', '')
+   288→            if not file_id:
+   289→                return
+   290→
+   291→            key = f"video-thumb:{file_id}"
+   292→
+   293→            def _task():
+   294→                from utils.video_thumbnail_generator import VideoThumbnailGenerator
+   295→                from config_api import get_storage_dir
+   296→                storage_dir = get_storage_dir()
+   297→                thumbnails_dir = os.path.join(storage_dir, 'thumbnails')
+   298→                gen = VideoThumbnailGenerator(thumbnails_dir)
+   299→                return gen.generate_thumbnail_for_video(video_path, file_id)
+   300→
+   301→            def _on_done(path):
+   302→                if path and os.path.exists(path):
+   303→                    try:
+   304→                        self.thumbnail_path_ready.emit(path)
+   305→                    except Exception:
+   306→                        pass
+   307→
+   308→            task_runner.submit(_task, key=key, cancel_token=self._thumb_cancel, on_done=_on_done)
+   309→        except Exception as e:
+   310→            self.video_label.setText(f"加载错误: {str(e)}")
+   311→
+   312→    def _apply_thumbnail(self, thumbnail_path: str):
+   313→        try:
+   314→            pixmap = QPixmap(thumbnail_path)
+   315→            if not pixmap.isNull():
+   316→                self._video_pix = pixmap
+   317→                self._update_video_pixmap()
+   318→                self.video_label.setStyleSheet("""
+   319→                    QLabel { border: 1px solid #ccc; border-radius: 4px; background-color: #2a2a2a; }
+   320→                """)
+   321→                self._apply_reference_badge()
+   322→        except Exception:
+   323→            pass
+   324→
+   325→    def _meta_dims(self) -> tuple:
+   326→        try:
+   327→            w = self.video_data.get('width')
+   328→            h = self.video_data.get('height')
+   329→            w = int(float(w)) if w not in (None, '') else None
+   330→            h = int(float(h)) if h not in (None, '') else None
+   331→            if not (w and h):
+   332→                p = self.video_data.get('parameters') or {}
+   333→                size_txt = p.get('size') or ''
+   334→                if isinstance(size_txt, str) and 'x' in size_txt:
+   335→                    sw, sh = size_txt.split('x')
+   336→                    w, h = int(sw), int(sh)
+   337→            if not (w and h):
+   338→                w, h = 1, 1
+   339→            return w, h
+   340→        except Exception:
+   341→            return 1, 1
+   342→
+   343→    def _refresh_reference_info(self) -> Dict[str, Any]:
+   344→        info = self.video_data.get('_reference_info') if isinstance(self.video_data, dict) else None
+   345→        if not isinstance(info, dict):
+   346→            info = summarize_reference_assets(self.video_data)
+   347→            try:
+   348→                self.video_data['_reference_info'] = info
+   349→            except Exception:
+   350→                pass
+   351→        self._reference_info = info or {}
+   352→        return self._reference_info
+   353→
+   354→    def _apply_reference_badge(self):
+   355→        if not isinstance(self._ref_badge, QLabel):
+   356→            return
+   357→        info = self._refresh_reference_info()
+   358→        count = info.get('count', 0) if isinstance(info, dict) else 0
+   359→        summary = info.get('summary', '') if isinstance(info, dict) else ''
+   360→        if count:
+   361→            self._ref_badge.setText(str(count))
+   362→            try:
+   363→                self._ref_badge.adjustSize()
+   364→            except Exception:
+   365→                pass
+   366→            self._ref_badge.show()
+   367→            self._update_reference_badge_geometry()
+   368→        else:
+   369→            self._ref_badge.hide()
+   370→        try:
+   371→            self.setToolTip(summary if summary else '')
+   372→        except Exception:
+   373→            pass
+   374→
+   375→    def _update_reference_badge_geometry(self):
+   376→        if not isinstance(self._ref_badge, QLabel) or not self._ref_badge.isVisible():
+   377→            return
+   378→        if not hasattr(self, 'video_label'):
+   379→            return
+   380→        label_w = self.video_label.width()
+   381→        label_h = self.video_label.height()
+   382→        if label_w <= 0 or label_h <= 0:
+   383→            return
+   384→        try:
+   385→            badge_size = self._ref_badge.sizeHint()
+   386→        except Exception:
+   387→            badge_size = self._ref_badge.size()
+   388→        try:
+   389→            margin = max(4, DpiScaler.px(6))
+   390→        except Exception:
+   391→            margin = 6
+   392→        x = max(0, label_w - badge_size.width() - margin)
+   393→        y = margin
+   394→        self._ref_badge.move(x, y)
+   395→
+   396→    def set_column_width(self, width: int):
+   397→        try:
+   398→            self._column_width = int(width)
+   399→            w, h = self._meta_dims()
+   400→            target_h = int(round(self._column_width * h / max(1, w)))
+   401→            try:
+   402→                self.video_label.setFixedHeight(target_h)
+   403→            except Exception:
+   404→                pass
+   405→            # 若已加载缩略图，重新按列宽缩放
+   406→            if getattr(self, '_video_pix', None) is not None:
+   407→                self._update_video_pixmap()
+   408→            self._update_reference_badge_geometry()
+   409→        except Exception:
+   410→            pass
+   411→
+   412→    def _available_content_width(self) -> int:
+   413→        try:
+   414→            if hasattr(self, '_column_width') and isinstance(self._column_width, int) and self._column_width > 0:
+   415→                return int(self._column_width)
+   416→            margins = self.layout().contentsMargins() if isinstance(self.layout(), QVBoxLayout) else None
+   417→            pad = (margins.left() + margins.right()) if margins else 20
+   418→            w = max(1, self.width() - pad)
+   419→            # 如果布局尚未就绪，退化为label当前宽度
+   420→            if self.video_label.width() > 0:
+   421→                w = max(w, self.video_label.width())
+   422→            # 再次兜底：使用设计列宽（280）的DPI缩放作为最低宽度
+   423→            try:
+   424→                w = max(w, DpiScaler.px(280) - pad)
+   425→            except Exception:
+   426→                w = max(w, 200)
+   427→            return w
+   428→        except Exception:
+   429→            try:
+   430→                return max(1, DpiScaler.px(260))
+   431→            except Exception:
+   432→                return 220
+   433→
+   434→    def _update_video_pixmap(self):
+   435→        try:
+   436→            if not self._video_pix:
+   437→                return
+   438→            content_w = self._available_content_width()
+   439→            pw = max(1, self._video_pix.width())
+   440→            ph = max(1, self._video_pix.height())
+   441→            target_w = content_w
+   442→            target_h = int(round(target_w * ph / pw))
+   443→            scaled = self._video_pix.scaled(target_w, target_h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+   444→            self.video_label.setPixmap(scaled)
+   445→            try:
+   446→                self.video_label.setFixedHeight(scaled.height())
+   447→            except Exception:
+   448→                pass
+   449→            self._update_reference_badge_geometry()
+   450→        except Exception:
+   451→            pass
+   452→
+   453→    def resizeEvent(self, event):
+   454→        super().resizeEvent(event)
+   455→        if getattr(self, '_video_pix', None) is not None:
+   456→            self._update_video_pixmap()
+   457→        self._update_reference_badge_geometry()
+   458→        if self._overlay and self._overlay.isVisible():
+   459→            self._overlay.setGeometry(0, 0, self.video_label.width(), self.video_label.height())
+   460→
+   461→    def eventFilter(self, obj, event):
+   462→        try:
+   463→            if obj is getattr(self, 'video_label', None) and event.type() == QEvent.Resize:
+   464→                self._update_reference_badge_geometry()
+   465→        except Exception:
+   466→            pass
+   467→        return super().eventFilter(obj, event)
+   468→
+   469→    def mousePressEvent(self, event):
+   470→        """鼠标按下事件"""
+   471→        if event.button() == Qt.LeftButton:
+   472→            self.on_click(event)
+   473→        super().mousePressEvent(event)
+   474→    
+   475→    def on_click(self, event):
+   476→        """点击事件 - 显示视频详细信息"""
+   477→        if _video_detail_handler:
+   478→            try:
+   479→                _video_detail_handler(self.video_data, self.video_list, self.current_index, self)
+   480→                return
+   481→            except Exception as exc:
+   482→                logger.error(f"显示视频详情失败: {exc}")
+   483→        self.show_styled_message("错误", "无法显示视频详情：未注册处理器。", "warning")
+   484→    
+   485→    def show_context_menu(self, position):
+   486→        """显示右键上下文菜单"""
+   487→        menu = QMenu(self)
+   488→        menu.setStyleSheet("""
+   489→            QMenu {
+   490→                background-color: #2a2a2a;
+   491→                color: white;
+   492→                border: 1px solid #555;
+   493→                border-radius: 4px;
+   494→                padding: 4px;
+   495→            }
+   496→            QMenu::item {
+   497→                padding: 8px 16px;
+   498→                border-radius: 4px;
+   499→            }
+   500→            QMenu::item:selected {
+   501→                background-color: #4CAF50;
+   502→            }
+   503→        """)
+   504→        
+   505→        # 下载视频动作
+   506→        download_action = QAction("下载视频", self)
+   507→        download_action.triggered.connect(self.download_video)
+   508→        menu.addAction(download_action)
+   509→        
+   510→        # 复制视频路径动作
+   511→        copy_path_action = QAction("复制路径", self)
+   512→        copy_path_action.triggered.connect(self.copy_video_path)
+   513→        menu.addAction(copy_path_action)
+   514→        
+   515→        # 复制提示词动作
+   516→        copy_prompt_action = QAction("复制提示词", self)
+   517→        copy_prompt_action.triggered.connect(self.copy_prompt)
+   518→        menu.addAction(copy_prompt_action)
+   519→        
+   520→        # 显示菜单
+   521→        menu.exec(self.mapToGlobal(position))
+   522→    
+   523→    def download_video(self):
+   524→        """下载视频到指定位置"""
+   525→        video_path = self.video_data.get('absolute_path', '') or self.video_data.get('file_path', '')
+   526→        if not video_path or not os.path.exists(video_path):
+   527→            self.show_styled_message("错误", "视频文件不存在", "warning")
+   528→            return
+   529→        
+   530→        default_name = f"video_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+   531→        save_path = safe_get_save_file_name(
+   532→            self,
+   533→            "保存视频",
+   534→            default_name,
+   535→            "视频文件 (*.mp4)"
+   536→        )
+   537→        
+   538→        if save_path:
+   539→            try:
+   540→                import shutil
+   541→                shutil.copy2(video_path, save_path)
+   542→                self.show_styled_message("成功", f"视频已保存到: {os.path.basename(save_path)}", "information")
+   543→            except Exception as e:
+   544→                self.show_styled_message("错误", f"保存视频失败: {str(e)}", "critical")
+   545→    
+   546→    def copy_video_path(self):
+   547→        """复制视频路径到剪贴板"""
+   548→        video_path = self.video_data.get('absolute_path', '') or self.video_data.get('file_path', '')
+   549→        if video_path:
+   550→            clipboard = QApplication.clipboard()
+   551→            clipboard.setText(video_path)
+   552→            self.show_styled_message("成功", "视频路径已复制到剪贴板", "information")
+   553→        else:
+   554→            self.show_styled_message("错误", "视频路径不存在", "warning")
+   555→    
+   556→    def copy_prompt(self):
+   557→        """复制提示词到剪贴板"""
+   558→        prompt = self.video_data.get('prompt', '')
+   559→        if prompt:
+   560→            clipboard = QApplication.clipboard()
+   561→            clipboard.setText(prompt)
+   562→            self.show_styled_message("成功", "提示词已复制到剪贴板", "information")
+   563→        else:
+   564→            self.show_styled_message("错误", "提示词不存在", "warning")
+   565→    
+   566→    def show_styled_message(self, title: str, message: str, icon_type: str = "information"):
+   567→        """显示带有深色主题样式的消息框"""
+   568→        msg_box = QMessageBox(self)
+   569→        msg_box.setWindowTitle(title)
+   570→        msg_box.setText(message)
+   571→        
+   572→        # 设置图标
+   573→        if icon_type == "warning":
+   574→            msg_box.setIcon(QMessageBox.Warning)
+   575→        elif icon_type == "critical":
+   576→            msg_box.setIcon(QMessageBox.Critical)
+   577→        elif icon_type == "question":
+   578→            msg_box.setIcon(QMessageBox.Question)
+   579→        else:
+   580→            msg_box.setIcon(QMessageBox.Information)
+   581→        
+   582→        # 样式由全局QSS控制，不在此覆盖
+   583→        
+   584→        msg_box.exec()
+   585→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

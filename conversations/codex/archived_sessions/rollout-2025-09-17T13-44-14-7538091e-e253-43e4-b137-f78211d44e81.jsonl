@@ -1,0 +1,8 @@
+{"timestamp":"2025-09-17T05:44:14.698Z","type":"session_meta","payload":{"id":"7538091e-e253-43e4-b137-f78211d44e81","timestamp":"2025-09-17T05:44:14.686Z","cwd":"/Users/yunchang","originator":"codex_cli_rs","cli_version":"0.36.0","instructions":null}}
+{"timestamp":"2025-09-17T05:44:14.699Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"<environment_context>\n  <cwd>/Users/yunchang</cwd>\n  <approval_policy>on-request</approval_policy>\n  <sandbox_mode>read-only</sandbox_mode>\n  <network_access>restricted</network_access>\n  <shell>zsh</shell>\n</environment_context>"}]}}
+{"timestamp":"2025-09-17T05:44:14.699Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"hello"}]}}
+{"timestamp":"2025-09-17T05:44:14.699Z","type":"event_msg","payload":{"type":"user_message","message":"hello","kind":"plain"}}
+{"timestamp":"2025-09-17T05:44:14.699Z","type":"turn_context","payload":{"cwd":"/Users/yunchang","approval_policy":"on-request","sandbox_policy":{"mode":"read-only"},"model":"gpt-5-codex","summary":"auto"}}
+{"timestamp":"2025-09-17T05:44:25.037Z","type":"turn_context","payload":{"cwd":"/Users/yunchang","approval_policy":"on-request","sandbox_policy":{"mode":"read-only"},"model":"gpt-5-codex","summary":"auto"}}
+{"timestamp":"2025-09-17T05:44:35.257Z","type":"turn_context","payload":{"cwd":"/Users/yunchang","approval_policy":"on-request","sandbox_policy":{"mode":"read-only"},"model":"gpt-5-codex","summary":"auto"}}
+{"timestamp":"2025-09-17T05:44:40.724Z","type":"event_msg","payload":{"type":"turn_aborted","reason":"interrupted"}}

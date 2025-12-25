@@ -1,0 +1,130 @@
+     1→#!/usr/bin/env python3
+     2→# -*- coding: utf-8 -*-
+     3→"""
+     4→生成中的占位卡片。
+     5→
+     6→DEPRECATED: PlaceholderCard 类已废弃，仅在 archive/ 中的旧代码使用。
+     7→现代视图使用 Delegate 的 _paint_placeholder 方法绘制占位符。
+     8→"""
+     9→
+    10→from __future__ import annotations
+    11→
+    12→from datetime import datetime
+    13→from typing import Dict, Optional
+    14→
+    15→from PySide6.QtCore import Qt, QTimer, Signal
+    16→from PySide6.QtGui import QFont
+    17→from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
+    18→from loguru import logger
+    19→
+    20→
+    21→class PlaceholderCard(QFrame):
+    22→    """用于提示生成进度的占位卡片。"""
+    23→
+    24→    status_changed = Signal(str)
+    25→
+    26→    def __init__(self, placeholder_data: Dict[str, Optional[str]], parent=None):
+    27→        super().__init__(parent)
+    28→        self.task_id = placeholder_data.get("task_id", "")
+    29→        self.prompt = placeholder_data.get("prompt", "")
+    30→        self.content_type = placeholder_data.get("content_type", "images")
+    31→        self.created_at = placeholder_data.get("created_at") or datetime.now().isoformat()
+    32→
+    33→        self._status = "pending"
+    34→        self._elapsed_seconds = 0
+    35→        self._timer: Optional[QTimer] = None
+    36→
+    37→        self._init_ui()
+    38→        self._start_timer()
+    39→
+    40→    def _init_ui(self) -> None:
+    41→        self.setFrameStyle(QFrame.Box | QFrame.Raised)
+    42→        self.setStyleSheet(
+    43→            """
+    44→            PlaceholderCard {
+    45→                background-color: #242424;
+    46→                border: 2px dashed #555555;
+    47→                border-radius: 10px;
+    48→            }
+    49→            """
+    50→        )
+    51→        layout = QVBoxLayout(self)
+    52→        layout.setContentsMargins(12, 12, 12, 12)
+    53→        layout.setSpacing(8)
+    54→
+    55→        self.status_label = QLabel("等待中...")
+    56→        self.status_label.setAlignment(Qt.AlignCenter)
+    57→        self.status_label.setFont(QFont("Microsoft YaHei", 12, QFont.Bold))
+    58→        self.status_label.setStyleSheet("color: #d0d0d0;")
+    59→        layout.addWidget(self.status_label)
+    60→
+    61→        preview = self.prompt[:80] + ("..." if len(self.prompt) > 80 else "")
+    62→        self.prompt_label = QLabel(preview or "无提示词")
+    63→        self.prompt_label.setAlignment(Qt.AlignCenter)
+    64→        self.prompt_label.setWordWrap(True)
+    65→        self.prompt_label.setStyleSheet("color: #999999; font-size: 11px;")
+    66→        layout.addWidget(self.prompt_label)
+    67→
+    68→        self.timer_label = QLabel("0s")
+    69→        self.timer_label.setAlignment(Qt.AlignCenter)
+    70→        self.timer_label.setStyleSheet("color: #666666; font-size: 10px;")
+    71→        layout.addWidget(self.timer_label)
+    72→
+    73→        self.setMinimumHeight(160)
+    74→
+    75→    def _start_timer(self) -> None:
+    76→        if self._timer:
+    77→            return
+    78→        self._timer = QTimer(self)
+    79→        self._timer.timeout.connect(self._update_elapsed)
+    80→        self._timer.start(1000)
+    81→
+    82→    def _update_elapsed(self) -> None:
+    83→        if self._status not in {"pending", "generating"}:
+    84→            return
+    85→        self._elapsed_seconds += 1
+    86→        self.timer_label.setText(f"{self._elapsed_seconds}s")
+    87→
+    88→    def set_status(self, status: str, error_msg: Optional[str] = None) -> None:
+    89→        self._status = status
+    90→        if status == "pending":
+    91→            self.status_label.setText("等待中...")
+    92→            self.status_label.setStyleSheet("color: #d0d0d0;")
+    93→        elif status == "generating":
+    94→            self.status_label.setText("生成中...")
+    95→            self.status_label.setStyleSheet("color: #4CAF50;")
+    96→        elif status == "completed":
+    97→            self.status_label.setText("完成")
+    98→            self.status_label.setStyleSheet("color: #2196F3;")
+    99→            self._stop_timer()
+   100→        elif status == "failed":
+   101→            detail = error_msg or "未知错误"
+   102→            self.status_label.setText(f"失败: {detail}")
+   103→            self.status_label.setStyleSheet("color: #f44336;")
+   104→            self._stop_timer()
+   105→        else:
+   106→            self.status_label.setText(status)
+   107→        self.status_changed.emit(status)
+   108→        logger.debug(f"占位卡片状态: task={self.task_id} status={status}")
+   109→
+   110→    def set_progress(self, message: str, percentage: int) -> None:
+   111→        if percentage > 0:
+   112→            self.status_label.setText(f"生成中... {percentage}%")
+   113→        else:
+   114→            self.status_label.setText(message or "生成中...")
+   115→
+   116→    def _stop_timer(self) -> None:
+   117→        if self._timer and self._timer.isActive():
+   118→            self._timer.stop()
+   119→
+   120→    def get_elapsed_time(self) -> int:
+   121→        return self._elapsed_seconds
+   122→
+   123→
+   124→__all__ = ["PlaceholderCard"]
+   125→
+   126→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

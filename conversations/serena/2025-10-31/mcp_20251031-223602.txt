@@ -1,0 +1,5 @@
+INFO  2025-10-31 22:36:02,695 [MainThread] serena.cli:start_mcp_server:172 - Initializing Serena MCP server
+INFO  2025-10-31 22:36:02,695 [MainThread] serena.cli:start_mcp_server:173 - Storing logs in /Users/yunchang/.serena/logs/2025-10-31/mcp_20251031-223602.txt
+INFO  2025-10-31 22:36:02,697 [MainThread] serena.config.serena_config:from_config_file:458 - Loading Serena configuration from /Users/yunchang/.serena/serena_config.yml
+INFO  2025-10-31 22:36:02,703 [MainThread] serena.agent:__init__:130 - Will record tool usage statistics with token count estimator: TIKTOKEN_GPT4O.
+INFO  2025-10-31 22:36:02,904 [MainThread] serena.analytics:__init__:39 - Loading tiktoken encoding for model gpt-4o, this may take a while on the first run.
