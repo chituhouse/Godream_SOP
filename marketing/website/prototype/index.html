@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GoDream｜AIGC 视觉资产管理工具（桌面端）</title>
+    <meta
+      name="description"
+      content="GoDream（鸽梦）是一款 AIGC 视觉资产管理工具（桌面端）：把火山引擎 Doubao-Seed 视觉模型能力，做成生成→存储→复用→交付/轻协作的资产工作流。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg">
+      <div class="bg-orb orb-1"></div>
+      <div class="bg-orb orb-2"></div>
+      <div class="bg-orb orb-3"></div>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="GoDream">
+        <span class="brand-mark">鸽梦 GoDream</span>
+        <span class="brand-sub">AIGC 视觉资产管理（桌面端）</span>
+      </a>
+      <nav class="nav">
+        <a href="#loop">闭环</a>
+        <a href="#workflow">工作流</a>
+        <a href="#collab">NAS 协作</a>
+        <a href="#compare">对比</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="topbar-cta">
+        <a class="btn btn-ghost" href="#cta">咨询</a>
+        <a class="btn btn-primary" href="#cta">申请试用</a>
+      </div>
+    </header>
+
+    <main id="top" class="container">
+      <section class="hero">
+        <div class="hero-left">
+          <div class="chip">桌面端 · 本地/NAS · 数据不出公司</div>
+          <h1 class="hero-title">
+            让 AIGC 产出<br />
+            变成可复用的视觉资产库
+          </h1>
+          <p class="hero-sub">
+            鸽梦（GoDream）是一款 <strong>AIGC 视觉资产管理工具（桌面端）</strong>：把火山引擎
+            Doubao-Seed 系视觉模型能力，变成“生成 → 存储 → 复用 → 交付/轻协作”的资产工作流。
+          </p>
+          <div class="hero-badges" aria-label="Key capabilities">
+            <span class="pill">批量生成</span>
+            <span class="pill">实时存储</span>
+            <span class="pill">一键复用</span>
+            <span class="pill pill-muted">NAS 私有云协作</span>
+          </div>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#cta">申请试用 / 演示</a>
+            <a class="btn btn-ghost" href="#compare">先看差异</a>
+          </div>
+          <div class="hero-footnote">
+            注：模型能力来自火山引擎；GoDream 负责把能力做成可沉淀、可复用的资产工作流。
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="glass card">
+            <div class="card-hd">
+              <div class="card-title">资产卡片（示意）</div>
+              <div class="badge">可追溯</div>
+            </div>
+            <div class="asset-preview"></div>
+            <div class="kv">
+              <div class="kv-row">
+                <span class="k">类型</span><span class="v">图像 / 视频</span>
+              </div>
+              <div class="kv-row">
+                <span class="k">元数据</span><span class="v">Prompt · Seed · 参数 · 参考图</span>
+              </div>
+              <div class="kv-row">
+                <span class="k">存储</span><span class="v">本地 / NAS（可共享）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass mini">
+            <div class="mini-title">火山引擎 Doubao-Seed</div>
+            <div class="mini-sub">我们接入/调用，你获得最新视觉模型能力</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="loop">
+        <div class="section-hd">
+          <h2>生成只是开始，资产化才是复利</h2>
+          <p>不是再多跑 100 张，而是把一次成功沉淀成资产：可检索、可复刻、可交付。</p>
+        </div>
+
+        <div class="loop-line" aria-label="Asset loop">
+          <span class="loop-word">生成</span>
+          <span class="loop-sep">→</span>
+          <span class="loop-word">存储</span>
+          <span class="loop-sep">→</span>
+          <span class="loop-word">复用</span>
+          <span class="loop-sep">→</span>
+          <span class="loop-word loop-muted">交付/轻协作</span>
+        </div>
+
+        <div class="values">
+          <div class="glass card value-card">
+            <div class="value-hd">
+              <div class="icon i-image"></div>
+              <div>
+                <div class="value-title">批量生成</div>
+                <div class="value-sub">图片与视频统一工作流（能力来自火山）</div>
+              </div>
+            </div>
+            <div class="value-desc">一次出多张 / 一次出一套，让系列化产出更稳定。</div>
+          </div>
+
+          <div class="glass card value-card">
+            <div class="value-hd">
+              <div class="icon i-store"></div>
+              <div>
+                <div class="value-title">实时存储</div>
+                <div class="value-sub">结果 + 方法一起沉淀成本地/NAS 资产库</div>
+              </div>
+            </div>
+            <div class="value-desc">Prompt/参数/参考图/Seed 自动入库，可追溯、可继承。</div>
+          </div>
+
+          <div class="glass card value-card">
+            <div class="value-hd">
+              <div class="icon i-reuse"></div>
+              <div>
+                <div class="value-title">一键复用</div>
+                <div class="value-sub">把“神图/神视频”的方法变成可复刻模板</div>
+              </div>
+            </div>
+            <div class="value-desc">复用参数 + 批量变体，做系列版本不再从零开始。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="workflow">
+        <div class="section-hd">
+          <h2>图片与视频，一套资产工作流</h2>
+          <p>把“生成”做成“生产”：能沉淀、能复刻、能交付。</p>
+        </div>
+
+        <div class="grid2">
+          <div class="glass card feature">
+            <div class="feature-hd">
+              <div class="icon i-image"></div>
+              <div>
+                <div class="feature-title">图片工作流</div>
+                <div class="feature-sub">批量 · 组图/套图 · 多模态参考</div>
+              </div>
+            </div>
+            <ul class="bullets">
+              <li>批量与组图/套图：面向系列化产出</li>
+              <li>参考图输入：更稳的风格对齐与迭代</li>
+            </ul>
+          </div>
+
+          <div class="glass card feature">
+            <div class="feature-hd">
+              <div class="icon i-video"></div>
+              <div>
+                <div class="feature-title">视频工作流</div>
+                <div class="feature-sub">更可控的生成 · 可追溯复用</div>
+              </div>
+            </div>
+            <ul class="bullets">
+              <li>任务化生成：可管理、可回看、完成即入库</li>
+              <li>复用参数：快速做系列化版本</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="strip">
+          <div class="strip-item">
+            <div class="icon i-meta"></div>
+            <div class="strip-text">
+              <div class="strip-title">全量元数据</div>
+              <div class="strip-sub">Prompt · Seed · 参数 · 参考图一并保存</div>
+            </div>
+          </div>
+          <div class="strip-item">
+            <div class="icon i-search"></div>
+            <div class="strip-text">
+              <div class="strip-title">可检索可筛选</div>
+              <div class="strip-sub">让资产可找回、可对比、可继承</div>
+            </div>
+          </div>
+          <div class="strip-item">
+            <div class="icon i-sync"></div>
+            <div class="strip-text">
+              <div class="strip-title">优先同步更新</div>
+              <div class="strip-sub">优先接入火山官方开放能力与新模型</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="collab">
+        <div class="section-hd">
+          <h2>私有云协作（NAS）：数据不出公司，也能共享资产库</h2>
+          <p>相对路径存储 + NAS 映射，让团队看到同一个项目与资产库。</p>
+        </div>
+
+        <div class="grid2">
+          <div class="glass card">
+            <div class="card-title">一句话理解</div>
+            <p class="para">
+              你把 GoDream 项目放到 NAS/私有云共享目录里，团队成员映射同一网络路径后，就能在各自电脑上访问同一个资产库。
+            </p>
+            <div class="note">
+              边界：更适合 3–10 人小团队；并发写入建议通过流程约束/排队避免冲突（放在 FAQ）。
+            </div>
+          </div>
+          <div class="glass card diagram">
+            <div class="card-title">结构示意（简化）</div>
+            <div class="diagram-box">
+              <div class="d-col">
+                <div class="d-node">用户 A</div>
+                <div class="d-line"></div>
+                <div class="d-node">GoDream</div>
+              </div>
+              <div class="d-mid">
+                <div class="d-node d-accent">NAS / 私有云</div>
+                <div class="d-sub">共享目录 · 相对路径 · SQLite</div>
+              </div>
+              <div class="d-col">
+                <div class="d-node">用户 B</div>
+                <div class="d-line"></div>
+                <div class="d-node">GoDream</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="compare">
+        <div class="section-hd">
+          <h2>为什么不是另一个“生图工具”</h2>
+          <p>GoDream 关注的是“资产工作流”，而不是把你留在某个平台里。</p>
+        </div>
+
+        <div class="compare-cards">
+          <div class="glass card compare-card">
+            <div class="compare-title">生成平台</div>
+            <div class="compare-sub">强生成 · 弱沉淀</div>
+            <ul class="compare-list">
+              <li><span class="tag ok">✅</span> 生成能力</li>
+              <li><span class="tag no">✕</span> 方法沉淀（Prompt/参数/参考图/Seed）</li>
+              <li><span class="tag no">✕</span> 本地/NAS 资产库与可继承</li>
+            </ul>
+          </div>
+
+          <div class="glass card compare-card">
+            <div class="compare-title">传统图库/文件夹</div>
+            <div class="compare-sub">强管理 · 弱生成</div>
+            <ul class="compare-list">
+              <li><span class="tag no">✕</span> 生成能力</li>
+              <li><span class="tag no">✕</span> “方法”可追溯（只存文件）</li>
+              <li><span class="tag ok">✅</span> 本地管理稳定</li>
+            </ul>
+          </div>
+
+          <div class="glass card compare-card compare-accent">
+            <div class="compare-title">GoDream</div>
+            <div class="compare-sub">生成 × 沉淀 × 复用闭环</div>
+            <ul class="compare-list">
+              <li><span class="tag ok">✅</span> 生成能力（接入火山）</li>
+              <li><span class="tag ok">✅</span> 结果 + 方法一起入库</li>
+              <li><span class="tag ok">✅</span> 本地/NAS 资产库，一键复用</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="faq">
+        <div class="section-hd">
+          <h2>FAQ（边界与常见问题）</h2>
+          <p>把限制讲清楚，但不抢核心叙事。</p>
+        </div>
+
+        <div class="faq">
+          <button class="faq-item" type="button" data-faq>
+            <div class="faq-q">组图/套图速度大概是多少？</div>
+            <div class="faq-a">参考口径：约 1 分钟/张（受模型与网络影响）。建议用“队列+后台等待”方式跑一套图。</div>
+            <div class="faq-icon">＋</div>
+          </button>
+          <button class="faq-item" type="button" data-faq>
+            <div class="faq-q">NAS 协作适合多大团队？</div>
+            <div class="faq-a">更适合 3–10 人的小团队轻协作；并发写入建议通过流程约束/排队避免冲突。</div>
+            <div class="faq-icon">＋</div>
+          </button>
+          <button class="faq-item" type="button" data-faq>
+            <div class="faq-q">模型是你们自研的吗？</div>
+            <div class="faq-a">不是。GoDream 接入/调用火山引擎 Doubao-Seed 系视觉模型能力，我们把它做成可沉淀、可复用的资产工作流。</div>
+            <div class="faq-icon">＋</div>
+          </button>
+        </div>
+      </section>
+
+      <section class="section cta reveal" id="cta">
+        <div class="glass card cta-card">
+          <div class="cta-title">把 AIGC 产出沉淀为资产，让创作可以复利。</div>
+          <div class="cta-sub">
+            适合：电商/短视频/品牌内容团队中负责 AI 生成的人；支持本地与 NAS 资产库，数据不出公司。
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="javascript:void(0)">申请试用</a>
+            <a class="btn btn-ghost" href="javascript:void(0)">咨询与报价</a>
+          </div>
+          <div class="cta-footnote">备注：本页面为备份版原型与文案参考，最终以对外口径真源为准。</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div>© GoDream · AIGC 视觉资产管理工具（桌面端）</div>
+        <div class="muted">模型能力来自火山引擎 · Doubao-Seed 系视觉模型</div>
+      </div>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
