@@ -9,7 +9,8 @@
 - **开发周期**: 2025年8月18日 ~ 12月25日 (约4个月)
 - **Git提交数**: 358+
 - **版本迭代**: 40+ 个标记版本
-- **对话记录**: ~284MB
+- **对话记录**: ~284MB（原始 jsonl/txt）
+- **营销物料**: 官网备份版 + 公众号文章 + 销售资料（用于“火山销售转发即用”）
 
 ## 目录结构
 
@@ -25,11 +26,18 @@ Godream_SOP/
 │   ├── key-decisions.md         # 关键技术决策
 │   ├── lessons-learned.md       # 经验教训
 │   └── milestones.md            # 里程碑记录
+├── marketing/                   # 对外物料（私有）
+│   ├── 00_对外口径真源.md        # 对外口径真源（单一真源）
+│   ├── website/                 # 官网备份版（文案/结构/动效/原型）
+│   ├── wechat/                  # 公众号文章体系（发布稿/功能稿/场景稿/FAQ）
+│   └── sales/                   # 销售资料包（one-pager/pitch/话术/培训）
 ├── sop/                         # 标准操作流程
 │   ├── development-workflow.md  # 开发工作流
 │   ├── packaging-guide.md       # 打包指南
 │   └── debugging-guide.md       # 调试指南
 └── analysis/                    # 未来数据分析
+    ├── claude_jsonl_to_md.py     # Claude jsonl → Markdown 可读导出
+    └── build_conversation_index.py # 生成对话索引（机器可读 + Markdown）
 ```
 
 ## 对话记录来源
@@ -65,20 +73,28 @@ Godream_SOP/
 
 ### 查看对话记录
 
-Claude Code 对话以 JSON 格式存储，每个会话一个目录：
-```bash
-# 查看最近的会话
-ls -lt conversations/claude/ | head -10
-
-# 读取特定会话
-cat conversations/claude/<session-id>/messages.json | python -m json.tool
-```
+Claude Code / Codex 对话主要以 `.jsonl` 存储（每个会话一个文件）。
 
 ### 搜索特定内容
 
 ```bash
-# 搜索包含特定关键词的对话
-grep -r "SQLite" conversations/claude/
+# 在全仓库中搜索关键词（推荐）
+rg "SQLite|PySide6|相对路径|NAS" .
+```
+
+### 生成对话索引（推荐先做）
+
+```bash
+python analysis/build_conversation_index.py
+# 输出：
+# sop/conversations/index.md
+# sop/conversations/index.json
+```
+
+### 将 Claude jsonl 导出为可读 Markdown
+
+```bash
+python analysis/claude_jsonl_to_md.py conversations/claude/<session>.jsonl readable/claude/<session>.md
 ```
 
 ---
