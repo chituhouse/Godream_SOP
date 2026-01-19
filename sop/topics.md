@@ -18,8 +18,9 @@
 
 ## 3) UI 现代化（PyQt5 → PySide6）
 - ADR：`sop/adr/0002-pyqt5-to-pyside6.md`
+- **设计模式**：`sop/patterns/ui-theme-system.md`（Token 主题系统设计）
 - 时间线：`timeline.md`
-- 关键词检索建议：`PySide6`、`Qt6`、`token theme`
+- 关键词检索建议：`PySide6`、`Qt6`、`token theme`、`硬编码`、`样式迁移`
 
 ## 4) 相对路径与 NAS 私有云协作
 - ADR：`sop/adr/0003-relative-path-storage.md`
@@ -34,3 +35,7 @@
 - 月度复盘模板：`sop/retro/monthly-template.md`
 - 决策记录模板：`sop/adr/0000-template.md`
 - 对话索引：`sop/conversations/index.md`（时间线）+ 本文件（主题）
+
+## 7) 设计模式（Patterns）
+- UI 主题系统：`sop/patterns/ui-theme-system.md`
+- 关键词检索建议：`Token`、`硬编码`、`样式`、`主题`、`ConfigProvider`
